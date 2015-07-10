@@ -1,0 +1,412 @@
+<link rel="import" href="../../packages/polymer/polymer.html">
+
+<link rel="import" href="../../packages/paper_elements/paper_tab.html">
+<link rel="import" href="../../packages/paper_elements/paper_tabs.html">
+<link rel="import" href="../../packages/core_elements/core_animated_pages.html">
+<link rel="import" href="../../packages/core_elements/core_animated_pages/transitions/slide_from_right_nodart.html">
+<link rel="import" href="../../packages/core_elements/core_animated_pages/transitions/cross_fade_nodart.html">
+
+<link rel="import" href="../../packages/core_elements/core_toolbar.html">
+<link rel="import" href="../../packages/core_elements/core_image.html">
+
+<link rel="import" href="word_search.html">
+
+<polymer-element name="main-app">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            .item {
+                padding: 20px;
+            }
+
+            .item.core-selected {
+                background: #eee;
+            }
+
+            .item strong {
+                font-size: 20px;
+                margin-right: 20px;
+            }
+
+            section.core-selected > * {
+                /*box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);*/
+                /*background-color: white;*/
+                /*padding: 1px 20px;*/
+            }
+
+            paper-tabs {
+                box-shadow: 0 3px 2px rgba(0, 0, 0, 0.2);
+                color: black;
+                background-color: white;
+                width: 100%;
+            }
+
+            paper-tab::shadow #ink {
+                color: #006600;
+            }
+
+            paper-tabs::shadow #selectionBar {
+                background-color: #006600;
+            }
+
+            core-toolbar {
+                background-color: transparent;
+            }
+
+            core-toolbar img {
+                height: 207px;
+            }
+
+            core-toolbar div {
+                background-color: white;
+                width: 100%;
+            }
+
+            .namen header {
+                border: 1px solid grey;
+                border-radius: 5px 5px 0 0;
+                border-bottom: none;
+            }
+
+            .namen header .number {
+                line-height: 40px;
+                margin: 0 5px;
+            }
+
+            .namen header input {
+                border-radius: 5px 5px 0 0;
+                border-color: transparent;
+            }
+
+            .namen header input:focus {
+                outline: none;
+            }
+
+            .namen {
+                border-collapse: collapse;
+            }
+
+            .namen core-list-dart {
+                height: 600px;
+                border: 1px solid grey;
+            }
+
+            .namen .row:nth-child(even) {
+                background-color: whitesmoke;
+            }
+
+            .namen .row.selected {
+                background-color: #bbb;
+            }
+
+            .namen .row > div:first-child {
+                font-weight: 700;
+            }
+
+            .namen .row {
+                border-top: 1px solid transparent;
+                padding: 10px;
+            }
+
+            .namen input {
+                padding: 10px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .taaldacht {
+                background-color: black;
+                border-radius: 5px;
+                border: 1px solid black
+            }
+
+            .taaldacht a {
+                opacity: 0.9;
+                background: black url(http://taaldacht.files.wordpress.com/2013/05/taaldacht.jpg) no-repeat 33% 50%;
+                background-size: 800px 150px;
+                color: white;
+                padding: 20px;
+                font-family: Georgia, serif;
+                text-shadow: 0 2px 30px rgba(0, 0, 0, 1);
+                text-decoration: none;
+                display: block;
+            }
+
+            .taaldacht a:hover {
+                opacity: 1;
+            }
+
+            .keyboard {
+                width: 432px;
+                font-family: "Lucida Console", Monaco, monospace;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+                position: relative;
+            }
+
+            .keyboard div {
+                margin: 2px;
+            }
+
+            .keyboard div:nth-child(3) {
+                margin-left: 10px;
+            }
+
+            .keyboard div:nth-child(4) {
+                margin-left: 32px;
+            }
+
+            .keyboard div span {
+                display: inline-block;
+                padding: 5px 10px;
+                margin: 2px;
+                border: 1px solid grey;
+                background-color: #333333;
+                border-radius: 3px;
+                width: 12px;
+                line-height: 28px;
+                height: 28px;
+                vertical-align: bottom;
+                transition: color 200ms linear;;
+            }
+
+            .keyboard div span.highlight {
+                color: orangered;
+            }
+
+            .keyboard div:nth-child(5) span {
+                width: 166px;
+                margin-left: 108px;
+            }
+
+            #rune-output {
+                color: white;
+                background-color: #444;
+            }
+
+            #rune-hint {
+                position: absolute;
+                z-index: -1;
+                background-color: #eee;
+            }
+
+            #rune-input {
+                outline: none;
+                -webkit-text-fill-color: rgba(0,0,0,0.1);
+                background-color: transparent;
+            }
+
+            #rune-input, #rune-hint, #rune-output {
+                font-size: 24px;
+                font-family: "Lucida Console", Monaco, monospace;
+                word-wrap: break-word;
+                word-break: break-all;
+                margin: 0;
+                padding: 20px;
+                height: 250px;
+                width: 355px;
+            }
+
+            #anvil {
+                background-color: #444;
+                position: absolute;
+                left: -200px;
+                height: 260px;
+                width: 300px;
+                -webkit-transform: skew(20deg);
+                -moz-transform: skew(20deg);
+                -o-transform: skew(20deg);
+                z-index: -2;
+                border-bottom-left-radius: 200px;
+                text-align: center;
+                font-size: 30px;
+                line-height: 60px;
+            }
+
+            #anvil h1 {
+                color: #333;
+                font-size: 90px;
+                font-weight: bold;
+                transform: rotate(290deg) skew(20deg);
+                /*-webkit-transform: skew(-20deg);*/
+                /*-moz-transform: skew(-20deg);*/
+                /*-o-transform: skew(-20deg);*/
+            }
+
+            .keyboard #sound {
+                left: 55px;
+            }
+
+            .keyboard button, .keyboard select {
+                position: absolute;
+                bottom: 2px;
+                width: 51px;
+                height: 40px;
+                border: 1px solid;
+                border-radius: 5px;
+                background-color: #333333;
+                color: white;
+                outline: none;
+            }
+
+            .keyboard button:disabled {
+                border-color: grey;
+                background-color: black;
+            }
+
+            .keyboard button:active {
+                background-color: black;
+            }
+
+            .keyboard #language {
+                left: 301px;
+                width: 124px;
+            }
+        </style>
+
+        <core-toolbar>
+            <paper-tabs selected="{{selected}}" class="bottom" horizontal center layout>
+                <paper-tab>Runen</paper-tab>
+                <paper-tab>Noemkunst</paper-tab>
+                <paper-tab>Vrouwelijke Namen</paper-tab>
+                <paper-tab>Mannelijke Namen</paper-tab>
+            </paper-tabs>
+        </core-toolbar>
+
+        <core-animated-pages selected="{{selected}}" transitions="slide-from-right cross-fade">
+            <section>
+                <div>
+                    <!--
+                    <rune-text>{{ translation }}</rune-text>
+                    <rune-textarea language="medieval" translation="{{ translation }}"></rune-textarea>
+                    <rune-keyboard language="medieval" hint="alt-key"></rune-keyboard>
+                    -->
+
+                    <div style="width: 800px;" horizontal layout id="rune-translator">
+                        <div id="anvil"><h1>ᛊᛏᛖᚦᛁ</h1></div>
+                        <pre id="rune-hint">{{ translateText(runeInput, true) }}</pre>
+                        <textarea value="{{runeInput}}" id="rune-input"></textarea>
+                        <pre id="rune-output">{{ runeInput | translateText }}</pre>
+                    </div>
+
+                    <div class="keyboard">
+                        <template repeat="{{line in keyboard }}">
+                            <div class="line">
+                                <template repeat="{{key in line}}"><span id="{{key}}"
+                                        >{{ showHint ? (key | findRune).sound : (key | findRune).stave}}</span></template>
+                            </div>
+                        </template>
+                        <button id="stave">stave</button>
+                        <button id="sound">sound</button>
+                        <select id="language">
+                            <option template repeat="{{l in languages}}" value="{{l.name}}">{{l.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div>
+                    <div horizontal layout>
+                        <div>
+                            <h1>Noemkunst</h1>
+
+                            <p>
+                                Onze Germaanse voorouders gaven hun kinderen namen volgens oeroude, goede gewoonte: uit
+                                een keur van gebruikelijke, daarvoor bestemde woorden –die wij thans naamstammen noemen–
+                                stelden zij er twee samen om zo een enkele, betekenisvolle naam te smeden.
+                            </p>
+
+                            <p>
+                                Bekende voorbeelden van zulke Germaanse namen zijn Hendrik,Arnoud, Berend, Herman,
+                                Gerard, Willem, Wouter, Frederik, Hadewijg, Machteld, Hildegond,
+                            </p>
+                        </div>
+                        <div style="padding-top: 20px">
+                            <div class="taaldacht">
+                                <a href="http://taaldacht.nl/" target="_blank">
+                                    In samenwerking met <strong style="text-decoration: underline">Taaldacht</strong>.nl
+                                    <em>Mijmeringen over de aard en wortels van onze taal</em>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div horizontal layout>
+                        <core-selector flex selected="{{selectedNaamstam}}" on-core-select="{{changeNaamstammen}}">
+                            <div class="item">
+                                <strong>{{ keuzes[0].nederlandseVormen.join(', ') }}</strong>
+                                <span>{{  keuzes[0].betekenis }}</span>
+                            </div>
+                            <div class="item">
+                                <strong>{{ keuzes[1].nederlandseVormen.join(', ') }}</strong>
+                                <span>{{  keuzes[1].betekenis }}</span>
+                            </div>
+                        </core-selector>
+                        <div flex>
+                            {{ suggesties }}
+                        </div>
+                    </div>
+                    <div>{{suggesties.join(', ')}}</div>
+                    <word-search flex data="{{ naamstammen }}" on-core-select="{{chooseNaamstam}}">
+                    </word-search>
+                </div>
+            </section>
+
+            <section>
+                <div>
+                    <h1>Vrouwelijke Namen</h1>
+
+                    <div class="namen">
+                        <header horizontal layout>
+                            <div flex><input placeholder="Naam Vormen" value="{{search}}"></div>
+                            <div class="number">{{ filter(search)(vrouwelijkeNamen).length}}</div>
+                        </header>
+
+                        <core-list-dart data="{{ vrouwelijkeNamen | filter(search)}}">
+                            <template>
+                                <div class="row {{ {selected: selected} }}" horizontal layout>
+                                    <div flex two>{{model.vormen.join(', ')}}</div>
+                                    <div flex>{{model.naamstammen.join(', ')}}</div>
+                                    <div flex>{{model.koosnamen.join(', ')}}</div>
+                                    <div flex three>{{model.betekenis}}</div>
+                                </div>
+                            </template>
+                        </core-list-dart>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div>
+                    <h1>Mannelijke Namen</h1>
+
+                    <div class="namen">
+                        <header horizontal layout>
+                            <div flex><input placeholder="Naam Vormen" value="{{search}}"></div>
+                            <div class="number">{{filter(search)(mannelijkeNamen).length}}</div>
+                        </header>
+
+                        <core-list-dart data="{{ mannelijkeNamen | filter(search)}}" height="40">
+                            <template>
+                                <div class="row {{ {selected: selected} }}" horizontal layout>
+                                    <div flex two>{{model.vormen.join(', ')}}</div>
+                                    <div flex>{{model.naamstammen.join(', ')}}</div>
+                                    <div flex>{{model.koosnamen.join(', ')}}</div>
+                                    <div flex three>{{model.betekenis}}</div>
+                                </div>
+                            </template>
+                        </core-list-dart>
+                    </div>
+                </div>
+            </section>
+
+        </core-animated-pages>
+
+    </template>
+    <script type="application/dart" src="main_app.dart"></script>
+</polymer-element>

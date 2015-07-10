@@ -1,0 +1,95 @@
+<link rel="import" href="../../packages/polymer/polymer.html">
+<link rel="import" href="../../packages/core_elements/core_list_dart.html">
+<link rel="import" href="../../packages/core_elements/core_input.html">
+
+<polymer-element name="word-search" attributes="data">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            .row {
+                padding: 10px;
+                border: 10px solid transparent;
+            }
+            .row:nth-child(even) {
+                background-color: whitesmoke;
+            }
+            .selected {
+                border-color: #bbb;
+            }
+            em {
+                margin: 0 20px;
+            }
+            em::before {
+                content: '[';
+            }
+            em::after {
+                content: ']';
+            }
+            .betekenis {
+                color: darkgreen;
+            }
+            .betekenis::before {
+                content: '`';
+            }
+            .betekenis::after {
+                content: '`';
+                margin-right: 10px;
+            }
+            .herkomst {
+                display: block;
+            }
+            .voorbeelden {
+                color: #777;
+            }
+            .voorbeelden::before {
+                content: '–';
+                margin: 0 10px;
+            }
+            core-list-dart {
+                height: 600px;
+                border: 1px solid grey;
+            }
+            .top {
+                border: 1px solid grey;;
+                border-radius: 5px 5px 0 0;
+                border-bottom: none;
+                padding: 10px;
+                position: relative;
+            }
+            #input {
+                width: 100%;
+            }
+            /*#input:focus {*/
+                /*box-shadow: inset rgba(0,0,0,50) 5px;*/
+            /*}*/
+            .hover-right {
+                position: absolute;
+                right: 20px;
+                top: 10px;
+            }
+
+        </style>
+
+        <div class="top">
+            <input id="input" is="core-input" value="{{ search }}"
+                   placeholder="zoek (filters: n,o,b,h,v; bijv: 'n:aal' of 'b:heiligdom')">
+            <div class="hover-right">{{ filteredLength }}</div>
+        </div>
+
+        <core-list-dart  data="{{ data | filter(search) }}" height="40">
+            <template>
+                <li class="row {{ {selected: selected} }}">
+                    <strong>{{ model.nederlandseVormen.join(', ') }}</strong>
+                    <em>{{ model.oudNederlandseVormen.join(', ') }}</em>
+                    <span class="betekenis">{{model.betekenis}}</span>
+                    <span class="herkomst">{{model.herkomst}}</span>
+                    <span class="voorbeelden">{{model.voorbeelden}}</span>
+                </li>
+            </template>
+        </core-list-dart>
+
+    </template>
+    <script type="application/dart" src="word_search.dart"></script>
+</polymer-element>
