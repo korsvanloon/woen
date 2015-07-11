@@ -88,9 +88,10 @@ var elderFuthark = <Rune>[
   new Rune('ŋ', 'ᛜ', 'x', 'ingwaz', 'Ing (een godheid)', 'bevruchting, het begin, actualisatie van potentie'),
   new Rune('d', 'ᛞ', 'd', 'dagaz', 'dag', 'hoop, blijdschap'),
   new Rune('o', 'ᛟ', 'o', 'othala', 'oedel (erfgoed)', 'erfgoed, traditie, de adel'),
-  new Rune('.', '᛭', '.', 'plus'),
-  new Rune(',', '᛬', ',', 'colon'),
-  new Rune(' ', '᛫', ' ', 'period'),
+
+  new Rune('.', '᛭', '.', 'point'),
+  new Rune(' ', '᛫', ' ', 'space'),
+  new Rune(',', '᛬', ',', 'comma'),
 ];
 
 var youngerFuthark = <Rune>[
@@ -113,9 +114,9 @@ var youngerFuthark = <Rune>[
   new Rune('l', 'ᛚ', 'l', 'logr'),
   new Rune('ʀ', 'ᛦ', 'x', 'yr'),
 
-  new Rune('.', '᛭', '.'),
-  new Rune(' ', '᛫', ' '),
-  new Rune(',', '᛬', ','),
+  new Rune('.', '᛭', '.', 'point'),
+  new Rune(' ', '᛫', ' ', 'space'),
+  new Rune(',', '᛬', ',', 'comma'),
 ];
 
 var angloFuthorc = <Rune>[
@@ -152,9 +153,9 @@ var angloFuthorc = <Rune>[
   new Rune('ia', 'ᛡ', ']', 'ior'), //
   new Rune('ea', 'ᛠ', "'", 'ear'), //
 
-  new Rune('.', '᛭', '.'),
-  new Rune(' ', '᛫', ' '),
-  new Rune(',', '᛬', ','),
+  new Rune('.', '᛭', '.', 'point'),
+  new Rune(' ', '᛫', ' ', 'space'),
+  new Rune(',', '᛬', ',', 'comma'),
 ];
 
 //A	B	C	D	Ð	E	F	G	H	I	K	L	M	N	O	P	Q	R	S	T	U	V	W	X	Y	Z	Þ	Æ/Ä	Ø/Ö
@@ -190,9 +191,10 @@ var medievalRunes = <Rune>[
   new Rune('b', 'ᛒ', 'b'),
   new Rune('n', 'ᚿ', 'n'),
   new Rune('m', 'ᛘ', 'm'),
-  new Rune('.', '᛭', '.'),
-  new Rune(' ', '᛫', ' '),
-  new Rune(',', '᛬', ','),
+
+  new Rune('.', '᛭', '.', 'point'),
+  new Rune(' ', '᛫', ' ', 'space'),
+  new Rune(',', '᛬', ',', 'comma'),
 ];
 
 var runes = {'RUNIC LETTER AC A': 'ᚪ', 'RUNIC LETTER AESC': 'ᚫ', 'RUNIC LETTER ALGIZ EOLHX': 'ᛉ', 'RUNIC LETTER ANSUZ A': 'ᚨ', 'RUNIC LETTER BERKANAN BEORC BJARKAN B': 'ᛒ', 'RUNIC LETTER C': 'ᛍ', 'RUNIC LETTER CALC': 'ᛣ', 'RUNIC LETTER CEALC': 'ᛤ', 'RUNIC LETTER CEN': 'ᚳ', 'RUNIC LETTER CWEORTH': 'ᛢ', 'RUNIC LETTER D': 'ᛑ', 'RUNIC LETTER DAGAZ DAEG D': 'ᛞ', 'RUNIC LETTER DOTTED-L': 'ᛛ', 'RUNIC LETTER DOTTED-N': 'ᛀ', 'RUNIC LETTER DOTTED-P': 'ᛔ', 'RUNIC LETTER E': 'ᛂ', 'RUNIC LETTER EAR': 'ᛠ', 'RUNIC LETTER EHWAZ EH E': 'ᛖ', 'RUNIC LETTER ENG': 'ᚶ', 'RUNIC LETTER ETH': 'ᚧ', 'RUNIC LETTER FEHU FEOH FE F': 'ᚠ', 'RUNIC LETTER G': 'ᚵ', 'RUNIC LETTER GAR': 'ᚸ', 'RUNIC LETTER GEBO GYFU G': 'ᚷ', 'RUNIC LETTER GER': 'ᛄ', 'RUNIC LETTER HAEGL H': 'ᚻ', 'RUNIC LETTER HAGLAZ H': 'ᚺ', 'RUNIC LETTER ICELANDIC-YR': 'ᛨ', 'RUNIC LETTER ING': 'ᛝ', 'RUNIC LETTER INGWAZ': 'ᛜ', 'RUNIC LETTER IOR': 'ᛡ', 'RUNIC LETTER ISAZ IS ISS I': 'ᛁ', 'RUNIC LETTER IWAZ EOH': 'ᛇ', 'RUNIC LETTER JERAN J': 'ᛃ', 'RUNIC LETTER KAUN K': 'ᚴ', 'RUNIC LETTER KAUNA': 'ᚲ', 'RUNIC LETTER LAUKAZ LAGU LOGR L': 'ᛚ', 'RUNIC LETTER LONG-BRANCH-AR AE': 'ᛅ', 'RUNIC LETTER LONG-BRANCH-HAGALL H': 'ᚼ', 'RUNIC LETTER LONG-BRANCH-MADR M': 'ᛘ', 'RUNIC LETTER LONG-BRANCH-OSS O': 'ᚬ', 'RUNIC LETTER LONG-BRANCH-YR': 'ᛦ', 'RUNIC LETTER MANNAZ MAN M': 'ᛗ', 'RUNIC LETTER NAUDIZ NYD NAUD N': 'ᚾ', 'RUNIC LETTER O': 'ᚮ', 'RUNIC LETTER OE': 'ᚯ', 'RUNIC LETTER ON': 'ᚰ', 'RUNIC LETTER OPEN-P': 'ᛕ', 'RUNIC LETTER OS O': 'ᚩ', 'RUNIC LETTER OTHALAN ETHEL O': 'ᛟ', 'RUNIC LETTER PERTHO PEORTH P': 'ᛈ', 'RUNIC LETTER Q': 'ᛩ', 'RUNIC LETTER RAIDO RAD REID R': 'ᚱ', 'RUNIC LETTER SHORT-TWIG-AR A': 'ᛆ', 'RUNIC LETTER SHORT-TWIG-BJARKAN B': 'ᛓ', 'RUNIC LETTER SHORT-TWIG-HAGALL H': 'ᚽ', 'RUNIC LETTER SHORT-TWIG-MADR M': 'ᛙ', 'RUNIC LETTER SHORT-TWIG-NAUD N': 'ᚿ', 'RUNIC LETTER SHORT-TWIG-OSS O': 'ᚭ', 'RUNIC LETTER SHORT-TWIG-SOL S': 'ᛌ', 'RUNIC LETTER SHORT-TWIG-TYR T': 'ᛐ', 'RUNIC LETTER SHORT-TWIG-YR': 'ᛧ', 'RUNIC LETTER SIGEL LONG-BRANCH-SOL S': 'ᛋ', 'RUNIC LETTER SOWILO S': 'ᛊ', 'RUNIC LETTER STAN': 'ᛥ', 'RUNIC LETTER THURISAZ THURS THORN': 'ᚦ', 'RUNIC LETTER TIWAZ TIR TYR T': 'ᛏ', 'RUNIC LETTER URUZ UR U': 'ᚢ', 'RUNIC LETTER V': 'ᚡ', 'RUNIC LETTER W': 'ᚥ', 'RUNIC LETTER WUNJO WYNN W': 'ᚹ', 'RUNIC LETTER X': 'ᛪ', 'RUNIC LETTER Y': 'ᚤ', 'RUNIC LETTER YR': 'ᚣ', 'RUNIC LETTER Z': 'ᛎ', 'RUNIC MULTIPLE PUNCTUATION': '᛬', 'RUNIC SINGLE PUNCTUATION': '᛫', 'RUNIC ARLAUG SYMBOL (golden number 17)': 'ᛮ', 'RUNIC TVIMADUR SYMBOL (golden number 18)': 'ᛯ', 'RUNIC BELGTHOR SYMBOL (golden number 19)': 'ᛰ', 'RUNIC CROSS PUNCTUATION': '᛭'};

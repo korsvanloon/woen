@@ -1,0 +1,197 @@
+
+<polymer-element name="rune-anvil" attributes="input">
+    <template>
+        <style>
+            :host {
+                position: relative;
+            }
+            #keyboard {
+                width: 432px;
+                font-family: "Lucida Console", Monaco, monospace;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+                position: relative;
+            }
+
+            #keyboard div {
+                margin: 2px;
+            }
+
+            #keyboard div:nth-child(3) {
+                margin-left: 10px;
+            }
+
+            #keyboard div:nth-child(4) {
+                margin-left: 32px;
+            }
+
+            #keyboard div span {
+                display: inline-block;
+                padding: 5px 10px;
+                margin: 2px;
+                border: 1px solid grey;
+                background-color: #333333;
+                border-radius: 3px;
+                width: 12px;
+                line-height: 28px;
+                height: 28px;
+                vertical-align: bottom;
+                transition: color 200ms linear;
+            }
+
+            #keyboard div span.highlight {
+                color: orangered;
+            }
+
+            #keyboard div:nth-child(5) span {
+                width: 166px;
+                margin-left: 108px;
+            }
+
+            #rune-output {
+                color: white;
+                background-color: #444;
+            }
+
+            #rune-hint {
+                position: absolute;
+                z-index: -1;
+                background-color: #eee;
+            }
+
+            #rune-input {
+                outline: none;
+                background-color: transparent;
+                color: transparent;
+            }
+            @supports (-webkit-text-fill-color: rgba(0,0,0,0.0)) {
+                #rune-input {
+                    -webkit-text-fill-color: rgba(0,0,0,0.0);
+                    color: orangered;
+                }
+            }
+
+            #rune-input, #rune-hint, #rune-output {
+                border: none;
+                font-size: 24px;
+                font-family: "Lucida Console", Monaco, monospace;
+                white-space: pre-wrap;
+                word-break: break-all;
+                margin: 0;
+                padding: 20px;
+                height: 250px;
+                width: 355px;
+                overflow-y: scroll;
+            }
+
+            #tip {
+                background-color: #444;
+                position: absolute;
+                left: -200px;
+                height: 260px;
+                width: 300px;
+                transform: skew(20deg);
+                -o-transform: skew(20deg);
+                -moz-transform: skew(20deg);
+                -ms-transform: skew(20deg);
+                -webkit-transform: skew(20deg);
+                z-index: -2;
+                border-bottom-left-radius: 200px;
+                text-align: center;
+                font-size: 30px;
+                line-height: 60px;
+            }
+
+            #tip h1 {
+                margin-top: 80px;
+                color: #333;
+                font-size: 90px;
+                font-weight: bold;
+                transform: rotate(290deg) skew(20deg);
+                -o-transform: rotate(290deg) skew(20deg);
+                -moz-transform: rotate(290deg) skew(20deg);
+                -ms-transform: rotate(290deg) skew(20deg);
+                -webkit-transform: rotate(290deg) skew(20deg);
+            }
+
+            #keyboard #sound {
+                left: 55px;
+            }
+
+            #keyboard button, #keyboard select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                position: absolute;
+                bottom: 2px;
+                padding: 5px 10px;
+                width: 51px;
+                height: 40px;
+                border: 1px solid grey;
+                border-radius: 5px;
+                background-color: #333333;
+                color: white;
+                outline: none;
+                font-family: sans-serif;
+                font-size: 12px;
+                font-weight: normal;
+            }
+
+            #keyboard button:disabled {
+                border-color: orangered;
+                background-color: black;
+            }
+
+            #keyboard button:active {
+                background-color: black;
+            }
+
+            #keyboard #language {
+                left: 301px;
+                width: 124px;
+            }
+            /*_::-moz-range-track, body:last-child #caret {}*/
+            #caret {
+                position: absolute;
+                font-size: 24px;
+                border-left: 1px solid orangered;
+                top: 20px;
+                left: 20px;
+                height: 30px;
+                display: none;
+            }
+            #rune-input:focus + #caret {
+                display: inline;
+            }
+            #rune-translator {
+                position: relative;
+            }
+        </style>
+
+        <div horizontal layout id="rune-translator">
+            <div id="tip"><h1>ᛊᛏᛖᚦᛁ</h1></div>
+            <div>
+                <pre id="rune-hint">{{ translateText(input, true) }}</pre>
+                <textarea value="{{ input }}" id="rune-input"></textarea>
+                <!--<span id="caret"></span>-->
+            </div>
+            <pre id="rune-output">{{ input | translateText }}</pre>
+        </div>
+
+        <div id="keyboard">
+            <template repeat="{{ line in keyboard }}">
+                <div class="line">
+                    <template repeat="{{key in line}}"><span id="key{{ key | safe }}"
+                            >{{ showHint ? (key | findRune).sound : (key | findRune).stave}}</span></template>
+                </div>
+            </template>
+            <button id="stave">stave</button>
+            <button id="sound">sound</button>
+            <select id="language">
+                <option template repeat="{{l in languages}}" value="{{l.name}}">{{l.name}}</option>
+            </select>
+        </div>
+
+    </template>
+    <script type="application/dart" src="rune_anvil.dart"></script>
+</polymer-element>

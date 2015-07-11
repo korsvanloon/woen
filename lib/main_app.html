@@ -10,6 +10,7 @@
 <link rel="import" href="../../packages/core_elements/core_image.html">
 
 <link rel="import" href="word_search.html">
+<link rel="import" href="rune_anvil.html">
 
 <polymer-element name="main-app">
     <template>
@@ -138,134 +139,6 @@
             .taaldacht a:hover {
                 opacity: 1;
             }
-
-            .keyboard {
-                width: 432px;
-                font-family: "Lucida Console", Monaco, monospace;
-                color: white;
-                font-weight: bold;
-                font-size: 20px;
-                position: relative;
-            }
-
-            .keyboard div {
-                margin: 2px;
-            }
-
-            .keyboard div:nth-child(3) {
-                margin-left: 10px;
-            }
-
-            .keyboard div:nth-child(4) {
-                margin-left: 32px;
-            }
-
-            .keyboard div span {
-                display: inline-block;
-                padding: 5px 10px;
-                margin: 2px;
-                border: 1px solid grey;
-                background-color: #333333;
-                border-radius: 3px;
-                width: 12px;
-                line-height: 28px;
-                height: 28px;
-                vertical-align: bottom;
-                transition: color 200ms linear;;
-            }
-
-            .keyboard div span.highlight {
-                color: orangered;
-            }
-
-            .keyboard div:nth-child(5) span {
-                width: 166px;
-                margin-left: 108px;
-            }
-
-            #rune-output {
-                color: white;
-                background-color: #444;
-            }
-
-            #rune-hint {
-                position: absolute;
-                z-index: -1;
-                background-color: #eee;
-            }
-
-            #rune-input {
-                outline: none;
-                -webkit-text-fill-color: rgba(0,0,0,0.1);
-                background-color: transparent;
-            }
-
-            #rune-input, #rune-hint, #rune-output {
-                font-size: 24px;
-                font-family: "Lucida Console", Monaco, monospace;
-                word-wrap: break-word;
-                word-break: break-all;
-                margin: 0;
-                padding: 20px;
-                height: 250px;
-                width: 355px;
-            }
-
-            #anvil {
-                background-color: #444;
-                position: absolute;
-                left: -200px;
-                height: 260px;
-                width: 300px;
-                -webkit-transform: skew(20deg);
-                -moz-transform: skew(20deg);
-                -o-transform: skew(20deg);
-                z-index: -2;
-                border-bottom-left-radius: 200px;
-                text-align: center;
-                font-size: 30px;
-                line-height: 60px;
-            }
-
-            #anvil h1 {
-                color: #333;
-                font-size: 90px;
-                font-weight: bold;
-                transform: rotate(290deg) skew(20deg);
-                /*-webkit-transform: skew(-20deg);*/
-                /*-moz-transform: skew(-20deg);*/
-                /*-o-transform: skew(-20deg);*/
-            }
-
-            .keyboard #sound {
-                left: 55px;
-            }
-
-            .keyboard button, .keyboard select {
-                position: absolute;
-                bottom: 2px;
-                width: 51px;
-                height: 40px;
-                border: 1px solid;
-                border-radius: 5px;
-                background-color: #333333;
-                color: white;
-                outline: none;
-            }
-
-            .keyboard button:disabled {
-                border-color: grey;
-                background-color: black;
-            }
-
-            .keyboard button:active {
-                background-color: black;
-            }
-
-            .keyboard #language {
-                left: 301px;
-                width: 124px;
-            }
         </style>
 
         <core-toolbar>
@@ -285,27 +158,11 @@
                     <rune-textarea language="medieval" translation="{{ translation }}"></rune-textarea>
                     <rune-keyboard language="medieval" hint="alt-key"></rune-keyboard>
                     -->
+                    <h1>Regels</h1>
+                    <p>Schrijf fonetisch.</p>
+                    <p>Geen spaties achter punten of komma's.</p>
 
-                    <div style="width: 800px;" horizontal layout id="rune-translator">
-                        <div id="anvil"><h1>ᛊᛏᛖᚦᛁ</h1></div>
-                        <pre id="rune-hint">{{ translateText(runeInput, true) }}</pre>
-                        <textarea value="{{runeInput}}" id="rune-input"></textarea>
-                        <pre id="rune-output">{{ runeInput | translateText }}</pre>
-                    </div>
-
-                    <div class="keyboard">
-                        <template repeat="{{line in keyboard }}">
-                            <div class="line">
-                                <template repeat="{{key in line}}"><span id="{{key}}"
-                                        >{{ showHint ? (key | findRune).sound : (key | findRune).stave}}</span></template>
-                            </div>
-                        </template>
-                        <button id="stave">stave</button>
-                        <button id="sound">sound</button>
-                        <select id="language">
-                            <option template repeat="{{l in languages}}" value="{{l.name}}">{{l.name}}</option>
-                        </select>
-                    </div>
+                    <rune-anvil input=".hallo ik ben kors en ik kan heel gud sghryfen, en proghrameren."></rune-anvil>
                 </div>
             </section>
 

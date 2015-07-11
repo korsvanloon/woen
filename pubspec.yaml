@@ -11,6 +11,9 @@ dependencies:
   polymer: '>=0.16.0 <0.17.0'
   core_elements: any
   test: any
+  stream_ext: any
+  browser_detect: any
 transformers:
 - polymer:
     entry_points: web/index.html
+    entry_points: web/index2.html
