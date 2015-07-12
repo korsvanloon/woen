@@ -11,7 +11,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="scaffolded-by" content="https://github.com/google/stagehand">
-  <title>woen</title>
+  <title>Anvil</title>
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -31,20 +31,33 @@
   <link rel="import" href="packages/paper_elements/roboto.html">
 
   <!-- example of your own custom element -->
-  <link rel="import" href="packages/woen/main_app.html">
+  <link rel="import" href="packages/woen/rune_anvil.html">
 
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0 auto;
+      width: 800px;
+      background-color: #555;
+    }
+    a#contact {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      color: grey;
+    }
+  </style>
 </head>
-<style>
-  body {
-    margin: 0 auto;
-    width: 800px;
-  }
-</style>
 
 <body unresolved>
 
-  <main-app></main-app>
+  <h2>Rules</h2>
+  <p>Write phonetically</p>
+  <p>No spaces after interpunction</p>
+
+  <rune-anvil></rune-anvil>
+
+  <a id="contact" href="https://plus.google.com/u/0/+Korsvanloon" target="blank" title="Kors van Loon">contact the owner</a>
 
   <script type="application/dart">export 'package:polymer/init.dart';</script>
 </body>
