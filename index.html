@@ -1,0 +1,564 @@
+<!DOCTYPE html><!--
+  Copyright (c) 2015, <your name>. All rights reserved. Use of this source code
+  is governed by a BSD-style license that can be found in the LICENSE file.
+--><html><head><script src="packages/web_components/webcomponents.min.js"></script><script src="packages/web_components/dart_support.js"></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="scaffolded-by" content="https://github.com/google/stagehand">
+  <title>Anvil</title>
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Web Starter Kit">
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+  <meta name="msapplication-TileColor" content="#3372DF">
+
+  <!-- example of using a paper element -->
+  
+
+  <!-- example of your own custom element -->
+  
+
+  
+  
+</head>
+
+<body unresolved=""><div hidden=""><link href="//fonts.googleapis.com/css?family=RobotoDraft:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+<polymer-element name="rune-anvil" attributes="input">
+    <template>
+        <style>
+            :host {
+                position: relative;
+            }
+            #keyboard {
+                width: 432px;
+                font-family: "Lucida Console", Monaco, monospace;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+                position: relative;
+            }
+
+            #keyboard div {
+                margin: 2px;
+            }
+
+            #keyboard div:nth-child(3) {
+                margin-left: 10px;
+            }
+
+            #keyboard div:nth-child(4) {
+                margin-left: 32px;
+            }
+
+            #keyboard div span {
+                display: inline-block;
+                padding: 5px 10px;
+                margin: 2px;
+                border: 1px solid grey;
+                background-color: #333333;
+                border-radius: 3px;
+                width: 12px;
+                line-height: 28px;
+                height: 28px;
+                vertical-align: bottom;
+                transition: color 200ms linear;
+            }
+
+            #keyboard div span.highlight {
+                color: orangered;
+            }
+
+            #keyboard div:nth-child(5) span {
+                width: 166px;
+                margin-left: 108px;
+            }
+
+            #rune-output {
+                color: white;
+                background-color: #444;
+            }
+
+            #rune-hint {
+                position: absolute;
+                z-index: -1;
+                background-color: #eee;
+            }
+
+            #rune-input {
+                outline: none;
+                background-color: transparent;
+                color: transparent;
+            }
+                @supports (-webkit-text-fill-color: rgba(0,0,0,0.0)) {
+                #rune-input {
+                    -webkit-text-fill-color: rgba(0,0,0,0.0);
+                    color: orangered;
+                }
+            }
+
+            #rune-input, #rune-hint, #rune-output {
+                border: none;
+                font-size: 24px;
+                font-family: "Lucida Console", Monaco, monospace;
+                white-space: pre-wrap;
+                word-break: break-all;
+                margin: 0;
+                padding: 20px;
+                height: 250px;
+                width: 355px;
+                overflow-y: scroll;
+            }
+
+            #tip {
+                background-color: #444;
+                position: absolute;
+                left: -200px;
+                height: 260px;
+                width: 300px;
+                transform: skew(20deg);
+                -o-transform: skew(20deg);
+                -moz-transform: skew(20deg);
+                -ms-transform: skew(20deg);
+                -webkit-transform: skew(20deg);
+                z-index: -2;
+                border-bottom-left-radius: 200px;
+                text-align: center;
+                font-size: 30px;
+                line-height: 60px;
+            }
+
+            #tip h1 {
+                margin-top: 80px;
+                color: #333;
+                font-size: 90px;
+                font-weight: bold;
+                transform: rotate(290deg) skew(20deg);
+                -o-transform: rotate(290deg) skew(20deg);
+                -moz-transform: rotate(290deg) skew(20deg);
+                -ms-transform: rotate(290deg) skew(20deg);
+                -webkit-transform: rotate(290deg) skew(20deg);
+            }
+
+            #keyboard #sound {
+                left: 55px;
+            }
+
+            #keyboard button, #keyboard select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                position: absolute;
+                bottom: 2px;
+                padding: 5px 10px;
+                width: 51px;
+                height: 40px;
+                border: 1px solid grey;
+                border-radius: 5px;
+                background-color: #333333;
+                color: white;
+                outline: none;
+                font-family: sans-serif;
+                font-size: 12px;
+                font-weight: normal;
+            }
+
+            #keyboard button:disabled {
+                border-color: orangered;
+                background-color: black;
+            }
+
+            #keyboard button:active {
+                background-color: black;
+            }
+
+            #keyboard #language {
+                left: 301px;
+                width: 124px;
+            }
+            /*_::-moz-range-track, body:last-child #caret {}*/
+            #caret {
+                position: absolute;
+                font-size: 24px;
+                border-left: 1px solid orangered;
+                top: 20px;
+                left: 20px;
+                height: 30px;
+                display: none;
+            }
+            #rune-input:focus + #caret {
+                display: inline;
+            }
+            #rune-translator {
+                position: relative;
+            }
+        </style>
+
+        <div horizontal="" layout="" id="rune-translator">
+            <div id="tip"><h1>ᛊᛏᛖᚦᛁ</h1></div>
+            <div>
+                <pre id="rune-hint">{{ translateText(input, true) }}</pre>
+                <textarea value="{{ input }}" id="rune-input"></textarea>
+                <!--<span id="caret"></span>-->
+            </div>
+            <pre id="rune-output">{{ input | translateText }}</pre>
+        </div>
+
+        <div id="keyboard">
+            <template repeat="{{ line in keyboard }}">
+                <div class="line">
+                    <template repeat="{{key in line}}"><span id="key{{ key | safe }}">{{ showHint ? (key | findRune).sound : (key | findRune).stave}}</span></template>
+                </div>
+            </template>
+            <button id="stave">stave</button>
+            <button id="sound">sound</button>
+            <select id="language">
+                <option template="" repeat="{{l in languages}}" value="{{l.name}}">{{l.name}}</option>
+            </select>
+        </div>
+
+    </template>
+    
+</polymer-element>
+<style>/* Copyright (c) 2015, <your name>. All rights reserved. Use of this source code */
+/* is governed by a BSD-style license that can be found in the LICENSE file. */
+
+body {
+    font-family: RobotoDraft, sans-serif;
+    color: #333;
+
+    /*-webkit-user-select: none;*/
+    /*-moz-user-select: none;*/
+    /*-ms-user-select: none;*/
+    /*user-select: none;*/
+    /*-webkit-tap-highlight-color: rgba(0,0,0,0);*/
+    /*-webkit-touch-callout: none;*/
+}
+</style><style>
+    body {
+      margin: 0 auto;
+      width: 800px;
+      background-color: #555;
+    }
+    a#contact {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      color: grey;
+    }
+  </style><style shim-shadowdom="">
+/*******************************
+          Flex Layout
+*******************************/
+
+html /deep/ [layout][horizontal], html /deep/ [layout][vertical] {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+html /deep/ [layout][horizontal][inline], html /deep/ [layout][vertical][inline] {
+  display: -ms-inline-flexbox;
+  display: -webkit-inline-flex;
+  display: inline-flex;
+}
+
+html /deep/ [layout][horizontal] {
+  -ms-flex-direction: row;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+
+html /deep/ [layout][horizontal][reverse] {
+  -ms-flex-direction: row-reverse;
+  -webkit-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+}
+
+html /deep/ [layout][vertical] {
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+html /deep/ [layout][vertical][reverse] {
+  -ms-flex-direction: column-reverse;
+  -webkit-flex-direction: column-reverse;
+  flex-direction: column-reverse;
+}
+
+html /deep/ [layout][wrap] {
+  -ms-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+html /deep/ [layout][wrap-reverse] {
+  -ms-flex-wrap: wrap-reverse;
+  -webkit-flex-wrap: wrap-reverse;
+  flex-wrap: wrap-reverse;
+}
+
+html /deep/ [flex] {
+  -ms-flex: 1 1 0.000000001px;
+  -webkit-flex: 1;
+  flex: 1;
+  -webkit-flex-basis: 0.000000001px;
+  flex-basis: 0.000000001px;
+}
+
+html /deep/ [vertical][layout] > [flex][auto-vertical], html /deep/ [vertical][layout]::shadow [flex][auto-vertical] {
+  -ms-flex: 1 1 auto;
+  -webkit-flex-basis: auto;
+  flex-basis: auto;
+}
+
+html /deep/ [flex][auto] {
+  -ms-flex: 1 1 auto;
+  -webkit-flex-basis: auto;
+  flex-basis: auto;
+}
+
+html /deep/ [flex][none] {
+  -ms-flex: none;
+  -webkit-flex: none;
+  flex: none;
+}
+
+html /deep/ [flex][one] {
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+html /deep/ [flex][two] {
+  -ms-flex: 2;
+  -webkit-flex: 2;
+  flex: 2;
+}
+
+html /deep/ [flex][three] {
+  -ms-flex: 3;
+  -webkit-flex: 3;
+  flex: 3;
+}
+
+html /deep/ [flex][four] {
+  -ms-flex: 4;
+  -webkit-flex: 4;
+  flex: 4;
+}
+
+html /deep/ [flex][five] {
+  -ms-flex: 5;
+  -webkit-flex: 5;
+  flex: 5;
+}
+
+html /deep/ [flex][six] {
+  -ms-flex: 6;
+  -webkit-flex: 6;
+  flex: 6;
+}
+
+html /deep/ [flex][seven] {
+  -ms-flex: 7;
+  -webkit-flex: 7;
+  flex: 7;
+}
+
+html /deep/ [flex][eight] {
+  -ms-flex: 8;
+  -webkit-flex: 8;
+  flex: 8;
+}
+
+html /deep/ [flex][nine] {
+  -ms-flex: 9;
+  -webkit-flex: 9;
+  flex: 9;
+}
+
+html /deep/ [flex][ten] {
+  -ms-flex: 10;
+  -webkit-flex: 10;
+  flex: 10;
+}
+
+html /deep/ [flex][eleven] {
+  -ms-flex: 11;
+  -webkit-flex: 11;
+  flex: 11;
+}
+
+html /deep/ [flex][twelve] {
+  -ms-flex: 12;
+  -webkit-flex: 12;
+  flex: 12;
+}
+
+/* alignment in cross axis */
+
+html /deep/ [layout][start] {
+  -ms-flex-align: start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+}
+
+html /deep/ [layout][center], html /deep/ [layout][center-center] {
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+html /deep/ [layout][end] {
+  -ms-flex-align: end;
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+}
+
+/* alignment in main axis */
+
+html /deep/ [layout][start-justified] {
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+}
+
+html /deep/ [layout][center-justified], html /deep/ [layout][center-center] {
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+html /deep/ [layout][end-justified] {
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+html /deep/ [layout][around-justified] {
+  -ms-flex-pack: distribute;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+}
+
+html /deep/ [layout][justified] {
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+
+/* self alignment */
+
+html /deep/ [self-start] {
+  -ms-align-self: flex-start;
+  -webkit-align-self: flex-start;
+  align-self: flex-start;
+}
+
+html /deep/ [self-center] {
+  -ms-align-self: center;
+  -webkit-align-self: center;
+  align-self: center;
+}
+
+html /deep/ [self-end] {
+  -ms-align-self: flex-end;
+  -webkit-align-self: flex-end;
+  align-self: flex-end;
+}
+
+html /deep/ [self-stretch] {
+  -ms-align-self: stretch;
+  -webkit-align-self: stretch;
+  align-self: stretch;
+}
+
+/*******************************
+          Other Layout
+*******************************/
+
+html /deep/ [block] {
+  display: block;
+}
+
+/* ie support for hidden */
+html /deep/ [hidden] {
+  display: none !important;
+}
+
+html /deep/ [relative] {
+  position: relative;
+}
+
+html /deep/ [fit] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+body[fullbleed] {
+  margin: 0;
+  height: 100vh;
+}
+
+/*******************************
+            Other
+*******************************/
+
+html /deep/ [segment], html /deep/ segment {
+  display: block;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 1em 0.5em;
+  padding: 1em;
+  background-color: white;
+  -webkit-box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 5px 5px 5px 5px;
+}
+
+</style>
+
+<script src="packages/polymer_interop/src/js/polymer.min.js"></script>
+
+<script>
+// This empty script tag is necessary to work around dartbug.com/19650
+</script>
+
+<script>
+// This empty script tag is necessary to work around dartbug.com/19650
+</script>
+</div>
+
+  <h2>Rules</h2>
+  <p>Write phonetically</p>
+  <p>No spaces after interpunction</p>
+
+  <rune-anvil></rune-anvil>
+
+  <a id="contact" href="https://plus.google.com/u/0/+Korsvanloon" target="blank" title="Kors van Loon">contact the owner</a>
+
+  <script src="index.html.polymer.bootstrap.dart.js" async=""></script>
+
+
+</body></html>
