@@ -44,8 +44,9 @@ class RuneAnvil extends PolymerElement {
       shadowRoot.querySelector('#key$key').classes.add('highlight');
     });
     if(browser.isFirefox) {
-      var caret = new SpanElement()..id = 'caret';
-      shadowRoot.insertBefore(caret, shadowRoot.querySelector('#text-input'));
+      var caret = shadowRoot.querySelector('#caret') as SpanElement;
+      input.onFocus.listen((_) => caret.style.display = 'inline');
+      input.onBlur.listen((_) => caret.style.display = 'none');
       var direction$ = input.onKeyDown.where((e) => [KeyCode.LEFT, KeyCode.RIGHT, KeyCode.UP, KeyCode.DOWN].contains(e.keyCode));
       StreamExt.merge(input.onInput, StreamExt.merge(direction$, StreamExt.merge(input.onClick, input.onSelectStart)))
       .listen((e) {
