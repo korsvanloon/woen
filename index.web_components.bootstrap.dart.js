@@ -10765,7 +10765,7 @@ b.altKey
 z=b.charCode
 b.keyCode
 J.BC(b)
-y=H.Lw(J.mG(J.cF(b),"keypress")?z:0).toLowerCase()
+y=H.Lw(J.mG(J.cF(b),"keypress")?z:0)
 return H.J(new H.A8(a.RZ.gAc(),new U.XL()),[null,null]).tg(0,y)},
 static:{Hr:function(a){var z,y
 z=P.L5(null,null,null,P.I,W.I0)
