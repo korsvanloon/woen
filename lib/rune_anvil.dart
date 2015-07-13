@@ -108,7 +108,8 @@ class RuneAnvil extends PolymerElement {
   bool _isValid(KeyboardEvent e) {
     var ke = new KeyEvent.wrap(e);
     var charCode = ke.charCode;
-    var char = new String.fromCharCode(charCode).toLowerCase();
+//    var char = new String.fromCharCode(charCode).toLowerCase();
+    var char = new String.fromCharCode(charCode);
     var inKeyboard = language.characters.map((r) => r.keyChar).contains(char);
     return inKeyboard;
   }

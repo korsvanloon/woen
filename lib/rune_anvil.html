@@ -71,7 +71,6 @@
             }
 
             #rune-input, #rune-hint, #rune-output {
-                font-family: Monaco, monospace;
                 border: none;
                 font-size: 24px;
                 white-space: pre-wrap;
@@ -82,7 +81,9 @@
                 width: 355px;
                 overflow-y: scroll;
             }
-
+            #rune-input, #rune-hint {
+                font-family: Monaco, monospace;
+            }
             #tip {
                 background-color: #444;
                 position: absolute;
@@ -194,7 +195,7 @@
                 }
             }
             .rune-characters {
-                font-family: monospace;
+                font-family: runes, monospace;
             }
         </style>
 
