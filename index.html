@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="scaffolded-by" content="https://github.com/google/stagehand">
   <title>Anvil</title>
 
   <!-- Add to homescreen for Chrome on Android -->
@@ -47,7 +46,6 @@
             }
             #keyboard {
                 width: 432px;
-                font-family: "Lucida Console", Monaco, monospace;
                 color: white;
                 font-weight: bold;
                 font-size: 20px;
@@ -88,7 +86,6 @@
                 width: 166px;
                 margin-left: 108px;
             }
-
             #rune-output {
                 color: white;
                 background-color: #444;
@@ -105,7 +102,7 @@
                 background-color: transparent;
                 color: transparent;
             }
-                @supports (-webkit-text-fill-color: rgba(0,0,0,0.0)) {
+            @supports (-webkit-text-fill-color: rgba(0,0,0,0.0)) {
                 #rune-input {
                     -webkit-text-fill-color: rgba(0,0,0,0.0);
                     color: orangered;
@@ -113,9 +110,9 @@
             }
 
             #rune-input, #rune-hint, #rune-output {
+                font-family: Monaco, monospace;
                 border: none;
                 font-size: 24px;
-                font-family: "Lucida Console", Monaco, monospace;
                 white-space: pre-wrap;
                 word-break: break-all;
                 margin: 0;
@@ -206,19 +203,51 @@
             #rune-translator {
                 position: relative;
             }
+            @media only screen and (max-device-width: 480px) {
+                #keyboard {
+                    width: 100%;
+                }
+                #keyboard div span {
+                    padding: 5px 7px;
+                }
+                #keyboard div:nth-child(5) span {
+                    width: 105px;
+                }
+                #keyboard #language {
+                    left: 235px;
+                }
+                #rune-input, #rune-hint, #rune-output {
+                    height: 100px;
+                    width: 320px;
+                }
+                #tip {
+                    display: none;
+                }
+                #rune-input, #rune-hint {
+                    margin-top: 140px;
+                }
+                #rune-output {
+                    top: 0;
+                    left: 0;
+                    position: absolute;
+                }
+            }
+            .rune-characters {
+                font-family: monospace;
+            }
         </style>
 
         <div horizontal="" layout="" id="rune-translator">
-            <div id="tip"><h1>ᛊᛏᛖᚦᛁ</h1></div>
+            <div id="tip" class="rune-characters"><h1>ᛊᛏᛖᚦᛁ</h1></div>
             <div>
                 <pre id="rune-hint">{{ translateText(input, true) }}</pre>
                 <textarea value="{{ input }}" id="rune-input"></textarea>
                 <!--<span id="caret"></span>-->
             </div>
-            <pre id="rune-output">{{ input | translateText }}</pre>
+            <pre id="rune-output" class="rune-characters">{{ input | translateText }}</pre>
         </div>
 
-        <div id="keyboard">
+        <div id="keyboard" class="rune-characters">
             <template repeat="{{ line in keyboard }}">
                 <div class="line">
                     <template repeat="{{key in line}}"><span id="key{{ key | safe }}">{{ showHint ? (key | findRune).sound : (key | findRune).stave}}</span></template>
@@ -250,15 +279,24 @@ body {
 }
 </style><style>
     body {
-      margin: 0 auto;
-      width: 800px;
       background-color: #555;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media only screen and (min-device-width: 800px) {
+      body {
+        width: 800px;
+      }
+
     }
     a#contact {
       position: fixed;
       left: 0;
       bottom: 0;
       color: grey;
+    }
+    header {
+      padding: 10px;
     }
   </style><style shim-shadowdom="">
 /*******************************
@@ -549,10 +587,12 @@ html /deep/ [segment], html /deep/ segment {
 // This empty script tag is necessary to work around dartbug.com/19650
 </script>
 </div>
+  <header>
+    <h2>Rules</h2>
+    <p>Write phonetically</p>
+    <p>No spaces after interpunction</p>
+  </header>
 
-  <h2>Rules</h2>
-  <p>Write phonetically</p>
-  <p>No spaces after interpunction</p>
 
   <rune-anvil></rune-anvil>
 
