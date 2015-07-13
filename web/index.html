@@ -10,7 +10,6 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="scaffolded-by" content="https://github.com/google/stagehand">
   <title>Anvil</title>
 
   <!-- Add to homescreen for Chrome on Android -->
@@ -36,9 +35,15 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     body {
-      margin: 0 auto;
-      width: 800px;
       background-color: #555;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media only screen and (min-device-width: 800px) {
+      body {
+        width: 800px;
+      }
+
     }
     a#contact {
       position: fixed;
@@ -46,14 +51,19 @@
       bottom: 0;
       color: grey;
     }
+    header {
+      padding: 10px;
+    }
   </style>
 </head>
 
 <body unresolved>
+  <header>
+    <h2>Rules</h2>
+    <p>Write phonetically</p>
+    <p>No spaces after interpunction</p>
+  </header>
 
-  <h2>Rules</h2>
-  <p>Write phonetically</p>
-  <p>No spaces after interpunction</p>
 
   <rune-anvil></rune-anvil>
 

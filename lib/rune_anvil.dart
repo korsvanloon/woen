@@ -32,7 +32,8 @@ class RuneAnvil extends PolymerElement {
     super.ready();
 
     var input = shadowRoot.querySelector('#rune-input') as TextAreaElement;
-    input.onKeyPress.where((e) => KeyCode.isCharacterKey(e.charCode) && !_isValid(e)).listen((e) {
+    input.onKeyPress.where((e) => e.charCode == KeyCode.ENTER
+      || (KeyCode.isCharacterKey(e.charCode) && !_isValid(e))).listen((e) {
       e.preventDefault();
     });
 
