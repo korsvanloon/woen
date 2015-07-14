@@ -191,6 +191,19 @@
             #rune-translator {
                 position: relative;
             }
+            #keyboard-choice {
+                position: absolute;
+                right: 0;
+                bottom: -20px;
+                color: grey;
+                font-size: 12px;
+            }
+            #keyboard-choice span {
+                margin: 0 5px;
+            }
+            #keyboard-choice span.core-selected {
+                border-bottom: 1px solid grey;
+            }
             @media only screen and (max-device-width: 480px) {
 
                 #keyboard {
@@ -275,6 +288,11 @@
             <select id="language">
                 <option template repeat="{{l in languages}}" value="{{l.name}}">{{l.name}}</option>
             </select>
+            <core-selector id="keyboard-choice" selected="{{keyboardChoice}}">
+                <span>QWERTY</span>
+                <span>QWERTZ</span>
+                <span>AZERTY</span>
+            </core-selector>
         </div>
         <paper-dialog>
             Copy to clipboard: Ctrl+C / Cmd+C

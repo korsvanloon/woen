@@ -16,10 +16,12 @@ class RuneAnvil extends PolymerElement {
   @observable List<Language> languages;
   @published String input = '';
   @observable bool showHint = false;
+  @observable int keyboardChoice = 0;
+  List keyboards = [keyboardEn, keyboardDe, keyboardFr];
+  StreamSubscription keyCodeSubscription;
 
   attached() {
     super.attached();
-//    keyboard = toObservable(keyboardCharacters.map((e) => e.split('')));
     keyboard = toObservable(keyboardCodes);
     languages = [
       new Language('Elder Futhark', elderFuthark),
@@ -28,14 +30,7 @@ class RuneAnvil extends PolymerElement {
       new Language('Medieval Runes', medievalRunes),
     ];
     language = languages.first;
-
   }
-
-//  blaat() {
-//    var woen = new God('woen');
-//    var frija = new God('frija');
-//    var god = God.merge([woen, frija]);
-//  }
 
   useCustomCaret(TextAreaElement inputElement) {
     var caret = inputElement.parent.querySelector('.caret') as SpanElement;
@@ -77,20 +72,16 @@ class RuneAnvil extends PolymerElement {
         if (input.isNotEmpty)
           input = input.substring(0, input.length - 1);
       } else {
-        var char = codeToChar(code);
+        var char = codeToChar(code, keyboards[keyboardChoice]);
         if (findRune(code) != null)
           input += char;
       }
     });
   }
 
-  StreamSubscription keyCodeSubscription;
-
   prepareKeyboard(DivElement keyboardDiv) {
 
-    new Timer(new Duration(milliseconds:100), () {
-      keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
-    });
+    keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
 
     var buttons = keyboardDiv.querySelectorAll('#stave,#sound');
 
@@ -112,10 +103,8 @@ class RuneAnvil extends PolymerElement {
       language = languages.firstWhere((l) => l.name == languageName);
       keyboard = toObservable(keyboardCodes);
       input = '';
-      new Timer(new Duration(milliseconds:100), () {
-        keyCodeSubscription.cancel();
-        keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
-      });
+      keyCodeSubscription.cancel();
+      keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
     });
   }
 
@@ -133,7 +122,7 @@ class RuneAnvil extends PolymerElement {
     inputElement.onKeyPress // highlight
     .where(_isValid)
     .listen((e) {
-      var code = charToCode(new String.fromCharCode(e.which));
+      var code = charToCode(new String.fromCharCode(e.which), keyboards[keyboardChoice]);
       var button = shadowRoot.querySelector('#$code') as PaperButton;
       button.className = 'highlight';
     });
@@ -150,7 +139,6 @@ class RuneAnvil extends PolymerElement {
     });
 
     var buttons = inputElement.parent.querySelectorAll('core-icon-button');
-//    if(browser.isFirefox) buttons.forEach((b) => b.hidden = true);
 
     StreamExt.merge(
         inputElement.onKeyPress.where((e) => e.which == KeyCode.C && (e.ctrlKey || e.metaKey)),
@@ -170,13 +158,13 @@ class RuneAnvil extends PolymerElement {
       else {
         translationElement.select();
         document.execCommand('copy', null, null);
-        inputElement.focus();
+        translationElement.blur();
       }
     });
   }
 
-  ready() {
-    super.ready();
+  domReady() {
+    super.domReady();
 
     var phoneticInput = shadowRoot.querySelector('#phonetics .input') as TextAreaElement;
     var runesInput = shadowRoot.querySelector('#runes .input') as TextAreaElement;
@@ -186,7 +174,7 @@ class RuneAnvil extends PolymerElement {
 
     prepareKeyboard(shadowRoot.querySelector('#keyboard') as DivElement);
 
-    if (browser.isFirefox) {
+    if(browser.isFirefox) {
       useCustomCaret(phoneticInput);
       useCustomCaret(runesInput);
     }
@@ -194,6 +182,7 @@ class RuneAnvil extends PolymerElement {
     if(TouchEvent.supported) {
       phoneticInput.disabled = true;
       runesInput.disabled = true;
+      shadowRoot.querySelector('#keyboard-choice').hidden = true;
     }
 
   }
@@ -205,14 +194,14 @@ class RuneAnvil extends PolymerElement {
   String translateText(String text, [hint=false]) {
     if (language == null) return '';
     return text.split('').map((char) {
-      var rune = findRune(charToCode(char));
+      var rune = findRune(charToCode(char, keyboards[keyboardChoice]));
       return hint ? rune.sound : rune.stave;
     }).join();
   }
 
   bool _isValid(e) {
     var char = new String.fromCharCode(e.which);
-    var inKeyboard = findRune(charToCode(char)) != null;
+    var inKeyboard = findRune(charToCode(char, keyboards[keyboardChoice])) != null;
     return inKeyboard;
   }
 }
