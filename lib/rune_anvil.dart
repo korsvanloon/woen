@@ -101,10 +101,12 @@ class RuneAnvil extends PolymerElement {
     languageChoser.onChange.listen((e) {
       var languageName = languageChoser.selectedOptions.first.value;
       language = languages.firstWhere((l) => l.name == languageName);
+      keyCodeSubscription.cancel();
       keyboard = toObservable(keyboardCodes);
       input = '';
-      keyCodeSubscription.cancel();
-      keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
+      new Timer(new Duration(milliseconds:100), () {
+        keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
+      });
     });
   }
 
