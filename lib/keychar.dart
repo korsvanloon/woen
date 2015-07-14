@@ -22,8 +22,39 @@ class Rune implements KeyBoardChar{
   toString() => stave;
 }
 
-var staves = "ᚪᚫᛉᚨᛒᛍᛣᛤᚳᛢᛑᛞᛛᛀᛔᛂᛠᛖᚶᚧᚠᚵᚸᚷᛄᚻᚺᛨᛝᛜᛡᛁᛇᛃᚴᚲᛚᛅᚼᛘᚬᛦᛗᚾᚮᚯᚰᛕᚩᛟᛈᛩᚱᛆᛓᚽᛙᚿᚭᛌᛐᛧᛋᛊᛥᚦᛏᚢᚡᚥᚹᛪᚤᚣᛎ᛬᛫ᛮᛯᛰ᛭";
-var keyboardCharacters = [r"qwertyuiop[", r"asdfghjkl;", r"`zxcvbnm,.", r" "];
+const staves = "ᚪᚫᛉᚨᛒᛍᛣᛤᚳᛢᛑᛞᛛᛀᛔᛂᛠᛖᚶᚧᚠᚵᚸᚷᛄᚻᚺᛨᛝᛜᛡᛁᛇᛃᚴᚲᛚᛅᚼᛘᚬᛦᛗᚾᚮᚯᚰᛕᚩᛟᛈᛩᚱᛆᛓᚽᛙᚿᚭᛌᛐᛧᛋᛊᛥᚦᛏᚢᚡᚥᚹᛪᚤᚣᛎ᛬᛫ᛮᛯᛰ᛭";
+
+const keyboardEn = const[r"qwertyuiop[", r"asdfghjkl;'", r"zxcvbnm,.", r" "];
+const keyboardDe = const[r"qwertzuiopü", r"asdfghjklöä", r"yxcvbnm,.", r" "];
+const keyboardFr = const[r"azertyuiop^", r"qsdfghjklm'", r"wxcvbn,;:", r" "];
+
+charToCode(char, [keyboard=keyboardEn]) {
+  for(int i = 0; i < keyboard.length; i++) {
+    for (int j = 0; j < keyboard[i].length; j++) {
+      if (keyboard[i][j] == char) {
+        return keyboardCodes[i][j];
+      }
+    }
+  }
+  return null;
+}
+
+codeToChar(code, [keyboard=keyboardEn]) {
+  for(int i = 0; i < keyboard.length; i++) {
+    for (int j = 0; j < keyboard[i].length; j++) {
+      if (keyboardCodes[i][j] == code) {
+        return keyboard[i][j];
+      }
+    }
+  }
+  return null;
+}
+
+var keyboardCodes = [
+  ['KeyQ','KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft'],
+  ['KeyA','KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote'],
+  ['KeyZ','KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Point'],
+  ['Space']];
 
 var latin = <LatinChar>[
   new LatinChar('q'),
@@ -64,137 +95,137 @@ var latin = <LatinChar>[
 ];
 
 var elderFuthark = <Rune>[
-  new Rune('f', 'ᚠ', 'f', 'fehu', 'vee', 'rijkdom'),
-  new Rune('u', 'ᚢ', 'u', 'uruz', 'oeros', 'wilskracht'),
-  new Rune('þ', 'ᚦ', 'v', 'thurisaz', 'deurs (reus)', 'instinctieve kracht'),
-  new Rune('a', 'ᚨ', 'a', 'ansuz', 'ans (god)', 'voorspoed, vitaliteit'),
-  new Rune('r', 'ᚱ', 'r', 'raidho', 'rit', 'groei, beweging'),
-  new Rune('k', 'ᚲ', 'k', 'kaunan', 'kanker (gezwel)', 'sterfelijkheid, pijn'),
-  new Rune('g', 'ᚷ', 'g', 'gebo', 'gift', 'vrijgevigheid'),
-  new Rune('w', 'ᚹ', 'w', 'wunjo', 'vreugde', 'lol, ecstase'),
-  new Rune('h', 'ᚺ', 'h', 'hagalaz', 'hagel', 'vernietiging, chaos'),
-  new Rune('n', 'ᚾ', 'n', 'naudhiz', 'nood', 'onvervulde wens, moeilijke situatie'),
-  new Rune('i', 'ᛁ', 'i', 'isa', 'ijs', 'stagnatie, stilstand'),
-  new Rune('j', 'ᛃ', 'j', 'jera', 'jaar', 'oogst, beloning'),
-  new Rune('ï', 'ᛇ', 'y', 'eiwaz', 'ijf (taxus)', 'kracht, stabiliteit'),
-  new Rune('p', 'ᛈ', 'p', 'perdhro', 'perenboom', ''),
-  new Rune('z', 'ᛉ', 'z', 'elhaz', 'eland', 'bescherming, verdediging'),
-  new Rune('s', 'ᛊ', 's', 'sowulo', 'zon', 'succes, troost'),
-  new Rune('t', 'ᛏ', 't', 'tiwaz', 'Tuw (een godheid)', 'overwinning, heil, eer'),
-  new Rune('b', 'ᛒ', 'b', 'berkana', 'berk', 'vruchtbaarheid, groei, voortduren'),
-  new Rune('e', 'ᛖ', 'e', 'ehwaz', 'edel dier (paard)', 'vertrouwen, betrouwbaarheid, gezelschap'),
-  new Rune('m', 'ᛗ', 'm', 'mannaz', 'mens', 'toename, ondersteuning'),
-  new Rune('l', 'ᛚ', 'l', 'laguz', 'laak (stroom, rivier)', 'vormloosheid, potentie, chaos'),
-  new Rune('ŋ', 'ᛜ', 'x', 'ingwaz', 'Ing (een godheid)', 'bevruchting, het begin, actualisatie van potentie'),
-  new Rune('d', 'ᛞ', 'd', 'dagaz', 'dag', 'hoop, blijdschap'),
-  new Rune('o', 'ᛟ', 'o', 'othala', 'oedel (erfgoed)', 'erfgoed, traditie, de adel'),
+  new Rune('f', 'ᚠ', 'KeyF', 'fehu', 'vee', 'rijkdom'),
+  new Rune('u', 'ᚢ', 'KeyU', 'uruz', 'oeros', 'wilskracht'),
+  new Rune('þ', 'ᚦ', 'KeyV', 'thurisaz', 'deurs (reus)', 'instinctieve kracht'),
+  new Rune('a', 'ᚨ', 'KeyA', 'ansuz', 'ans (god)', 'voorspoed, vitaliteit'),
+  new Rune('r', 'ᚱ', 'KeyR', 'raidho', 'rit', 'groei, beweging'),
+  new Rune('k', 'ᚲ', 'KeyK', 'kaunan', 'kanker (gezwel)', 'sterfelijkheid, pijn'),
+  new Rune('g', 'ᚷ', 'KeyG', 'gebo', 'gift', 'vrijgevigheid'),
+  new Rune('w', 'ᚹ', 'KeyW', 'wunjo', 'vreugde', 'lol, ecstase'),
+  new Rune('h', 'ᚺ', 'KeyH', 'hagalaz', 'hagel', 'vernietiging, chaos'),
+  new Rune('n', 'ᚾ', 'KeyN', 'naudhiz', 'nood', 'onvervulde wens, moeilijke situatie'),
+  new Rune('i', 'ᛁ', 'KeyI', 'isa', 'ijs', 'stagnatie, stilstand'),
+  new Rune('j', 'ᛃ', 'KeyJ', 'jera', 'jaar', 'oogst, beloning'),
+  new Rune('ï', 'ᛇ', 'KeyY', 'eiwaz', 'ijf (taxus)', 'kracht, stabiliteit'),
+  new Rune('p', 'ᛈ', 'KeyP', 'perdhro', 'perenboom', ''),
+  new Rune('z', 'ᛉ', 'KeyZ', 'elhaz', 'eland', 'bescherming, verdediging'),
+  new Rune('s', 'ᛊ', 'KeyS', 'sowulo', 'zon', 'succes, troost'),
+  new Rune('t', 'ᛏ', 'KeyT', 'tiwaz', 'Tuw (een godheid)', 'overwinning, heil, eer'),
+  new Rune('b', 'ᛒ', 'KeyB', 'berkana', 'berk', 'vruchtbaarheid, groei, voortduren'),
+  new Rune('e', 'ᛖ', 'KeyE', 'ehwaz', 'edel dier (paard)', 'vertrouwen, betrouwbaarheid, gezelschap'),
+  new Rune('m', 'ᛗ', 'KeyM', 'mannaz', 'mens', 'toename, ondersteuning'),
+  new Rune('l', 'ᛚ', 'KeyL', 'laguz', 'laak (stroom, rivier)', 'vormloosheid, potentie, chaos'),
+  new Rune('ŋ', 'ᛜ', 'KeyX', 'ingwaz', 'Ing (een godheid)', 'bevruchting, het begin, actualisatie van potentie'),
+  new Rune('d', 'ᛞ', 'KeyD', 'dagaz', 'dag', 'hoop, blijdschap'),
+  new Rune('o', 'ᛟ', 'KeyO', 'othala', 'oedel (erfgoed)', 'erfgoed, traditie, de adel'),
 
-  new Rune('.', '᛭', '.', 'point'),
-  new Rune(' ', '᛫', ' ', 'space'),
-  new Rune(',', '᛬', ',', 'comma'),
+  new Rune('.', '᛭', 'Point', 'point'),
+  new Rune(' ', '᛫', 'Space', 'space'),
+  new Rune(',', '᛬', 'Comma', 'comma'),
 ];
 
 var youngerFuthark = <Rune>[
-  new Rune('f', 'ᚠ', 'f', 'fe'),
-  new Rune('u', 'ᚢ', 'u', 'ur'),
-  new Rune('þ', 'ᚦ', 'v', 'thurs'),
-  new Rune('ą', 'ᚬ', 'a', 'as'),
-  new Rune('r', 'ᚱ', 'r', 'reidh'),
-  new Rune('k', 'ᚴ', 'k', 'kaun'),
+  new Rune('f', 'ᚠ', 'KeyF', 'fe'),
+  new Rune('u', 'ᚢ', 'KeyU', 'ur'),
+  new Rune('þ', 'ᚦ', 'KeyV', 'thurs'),
+  new Rune('ą', 'ᚬ', 'KeyA', 'as'),
+  new Rune('r', 'ᚱ', 'KeyR', 'reidh'),
+  new Rune('k', 'ᚴ', 'KeyK', 'kaun'),
 
-  new Rune('h', 'ᚼ', 'h', 'hagall'),
-  new Rune('n', 'ᚾ', 'n', 'naudhr'),
-  new Rune('i', 'ᛁ', 'i', 'isa'),
-  new Rune('a', 'ᛅ', 'y', 'ar'),
-  new Rune('s', 'ᛋ', 's', 'sol'),
+  new Rune('h', 'ᚼ', 'KeyH', 'hagall'),
+  new Rune('n', 'ᚾ', 'KeyN', 'naudhr'),
+  new Rune('i', 'ᛁ', 'KeyI', 'isa'),
+  new Rune('a', 'ᛅ', 'KeyJ', 'ar'),
+  new Rune('s', 'ᛋ', 'KeyS', 'sol'),
 
-  new Rune('t', 'ᛏ', 't', 'tyr'),
-  new Rune('b', 'ᛒ', 'b', 'bjarken'),
-  new Rune('m', 'ᛘ', 'm', 'madhr'),
-  new Rune('l', 'ᛚ', 'l', 'logr'),
-  new Rune('ʀ', 'ᛦ', 'x', 'yr'),
+  new Rune('t', 'ᛏ', 'KeyT', 'tyr'),
+  new Rune('b', 'ᛒ', 'KeyB', 'bjarken'),
+  new Rune('m', 'ᛘ', 'KeyM', 'madhr'),
+  new Rune('l', 'ᛚ', 'KeyL', 'logr'),
+  new Rune('ʀ', 'ᛦ', 'KeyY', 'yr'),
 
-  new Rune('.', '᛭', '.', 'point'),
-  new Rune(' ', '᛫', ' ', 'space'),
-  new Rune(',', '᛬', ',', 'comma'),
+  new Rune('.', '᛭', 'Point', 'point'),
+  new Rune(' ', '᛫', 'Space', 'space'),
+  new Rune(',', '᛬', 'Comma', 'comma'),
 ];
 
 var angloFuthorc = <Rune>[
-  new Rune('f', 'ᚠ', 'f', 'feoh'),
-  new Rune('u', 'ᚢ', 'u', 'ur'),
-  new Rune('þ', 'ᚦ', 'v', 'thorn'),
-  new Rune('o', 'ᚩ', 'o', 'os'),
-  new Rune('r', 'ᚱ', 'r', 'rad'),
-  new Rune('k', 'ᚳ', 'k', 'cen'),
-  new Rune('g', 'ᚷ', 'g', 'gyfu'),
-  new Rune('w', 'ᚹ', 'w', 'wyn'),
+  new Rune('f', 'ᚠ', 'KeyF', 'feoh'),
+  new Rune('u', 'ᚢ', 'KeyU', 'ur'),
+  new Rune('þ', 'ᚦ', 'KeyV', 'thorn'),
+  new Rune('a', 'ᚪ', 'KeyA', 'ac'),  //
+  new Rune('r', 'ᚱ', 'KeyR', 'rad'),
+  new Rune('k', 'ᚳ', 'KeyK', 'cen'),
+  new Rune('g', 'ᚷ', 'KeyG', 'gyfu'),
+  new Rune('w', 'ᚹ', 'KeyW', 'wyn'),
 
-  new Rune('h', 'ᚻ', 'h', 'haegl'),
-  new Rune('n', 'ᚾ', 'n', 'nyd'),
-  new Rune('i', 'ᛁ', 'i', 'is'),
-  new Rune('j', 'ᛄ', 'j', 'ger'),
-  new Rune('eo', 'ᛇ', 'z', 'eoh'),
-  new Rune('p', 'ᛈ', 'p', 'peordh'),
-  new Rune('x', 'ᛉ', 'x', 'eolh'),
-  new Rune('s', 'ᛋ', 's', 'sigel'),
+  new Rune('h', 'ᚻ', 'KeyH', 'haegl'),
+  new Rune('n', 'ᚾ', 'KeyN', 'nyd'),
+  new Rune('i', 'ᛁ', 'KeyI', 'is'),
+  new Rune('j', 'ᛄ', 'KeyJ', 'ger'),
+  new Rune('y', 'ᚣ', 'KeyY', 'yr'),
+  new Rune('p', 'ᛈ', 'KeyP', 'peordh'),
+  new Rune('x', 'ᛉ', 'KeyZ', 'eolh'),
+  new Rune('s', 'ᛋ', 'KeyS', 'sigel'),
 
-  new Rune('t', 'ᛏ', 't', 'tir'),
-  new Rune('b', 'ᛒ', 'b', 'beorc'),
-  new Rune('e', 'ᛖ', 'e', 'eh'),
-  new Rune('m', 'ᛗ', 'm', 'mann'),
-  new Rune('l', 'ᛚ', 'l', 'lagu'),
-  new Rune('ŋ', 'ᛝ', 'c', 'ing'),
-  new Rune('d', 'ᛞ', 'd', 'daeg'),
-  new Rune('œ', 'ᛟ', 'q', 'ethel'),
+  new Rune('t', 'ᛏ', 'KeyT', 'tir'),
+  new Rune('b', 'ᛒ', 'KeyB', 'beorc'),
+  new Rune('e', 'ᛖ', 'KeyE', 'eh'),
+  new Rune('m', 'ᛗ', 'KeyM', 'mann'),
+  new Rune('l', 'ᛚ', 'KeyL', 'lagu'),
+  new Rune('ŋ', 'ᛝ', 'KeyX', 'ing'),
+  new Rune('d', 'ᛞ', 'KeyD', 'daeg'),
+  new Rune('o', 'ᚩ', 'KeyO', 'os'),
 
-  new Rune('a', 'ᚪ', 'a', 'ac'),  //
-  new Rune('æ', 'ᚫ', '[', 'aesc'), //
-  new Rune('y', 'ᚣ', 'y', 'yr'),
-  new Rune('ia', 'ᛡ', ']', 'ior'), //
-  new Rune('ea', 'ᛠ', "'", 'ear'), //
+  new Rune('ø', 'ᛇ','KeyZ', 'eoh'),
+  new Rune('œ', 'ᛟ', 'KeyQ', 'ethel'),
+  new Rune('æ', 'ᚫ', 'BracketLeft', 'aesc'), //
+  new Rune('ô', 'ᛡ', 'Semicolon', 'ior'), //
+  new Rune('å', 'ᛠ', "Quote", 'ear'), //
 
-  new Rune('.', '᛭', '.', 'point'),
-  new Rune(' ', '᛫', ' ', 'space'),
-  new Rune(',', '᛬', ',', 'comma'),
+  new Rune('.', '᛭', 'Point', 'point'),
+  new Rune(' ', '᛫', 'Space', 'space'),
+  new Rune(',', '᛬', 'Comma', 'comma'),
 ];
 
 //A	B	C	D	Ð	E	F	G	H	I	K	L	M	N	O	P	Q	R	S	T	U	V	W	X	Y	Z	Þ	Æ/Ä	Ø/Ö
 //ᛆ	ᛒ	ᛍ	ᛑ	ᚧ	ᛂ	ᚠ	ᚵ	ᚼ	ᛁ	ᚴ	ᛚ	ᛘ	ᚿ	ᚮ	ᛔ ᛩ	ᚱ	ᛋ	ᛐ	ᚢ	ᚡ ᚥ	ᛪ	ᛦ ᛎ	ᚦ	ᛅ/ᛆ	ᚯ
 
 var medievalRunes = <Rune>[
-  new Rune('q', 'ᛩ', 'q'),
-  new Rune('w', 'ᚥ', 'w'),
-  new Rune('e', 'ᛂ', 'e'),
-  new Rune('r', 'ᚱ', 'r'),
-  new Rune('t', 'ᛐ', 't'),
-  new Rune('y', 'ᛦ', 'y'),
-  new Rune('u', 'ᚢ', 'u'),
-  new Rune('i', 'ᛁ', 'i'),
-  new Rune('o', 'ᚮ', 'o'),
-  new Rune('p', 'ᛔ', 'p'),
-  new Rune('þ', 'ᚦ', '['),
-  new Rune('a', 'ᛆ', 'a'),
-  new Rune('s', 'ᛋ', 's'),
-  new Rune('d', 'ᛑ', 'd'),
-  new Rune('f', 'ᚠ', 'f'),
-  new Rune('g', 'ᚵ', 'g'),
-  new Rune('h', 'ᚼ', 'h'),
-  new Rune('ð', 'ᚧ', 'j'),
-  new Rune('k', 'ᚴ', 'k'),
-  new Rune('l', 'ᛚ', 'l'),
-  new Rune('ä', 'ᛅ', ';'),
-  new Rune('ö', 'ᚯ', "'"),
-  new Rune('z', 'ᛎ', 'z'),
-  new Rune('x', 'ᛪ', 'x'),
-  new Rune('c', 'ᛍ', 'c'),
-  new Rune('v', 'ᚡ', 'v'),
-  new Rune('b', 'ᛒ', 'b'),
-  new Rune('n', 'ᚿ', 'n'),
-  new Rune('m', 'ᛘ', 'm'),
+  new Rune('q', 'ᛩ', 'KeyQ'),
+  new Rune('w', 'ᚥ', 'KeyW'),
+  new Rune('e', 'ᛂ', 'KeyE'),
+  new Rune('r', 'ᚱ', 'KeyR'),
+  new Rune('t', 'ᛐ', 'KeyT'),
+  new Rune('y', 'ᛦ', 'KeyY'),
+  new Rune('u', 'ᚢ', 'KeyU'),
+  new Rune('i', 'ᛁ', 'KeyI'),
+  new Rune('o', 'ᚮ', 'KeyO'),
+  new Rune('p', 'ᛔ', 'KeyP'),
+  new Rune('þ', 'ᚦ', 'BracketLeft'),
+  new Rune('a', 'ᛆ', 'KeyA'),
+  new Rune('s', 'ᛋ', 'KeyS'),
+  new Rune('d', 'ᛑ', 'KeyD'),
+  new Rune('f', 'ᚠ', 'KeyF'),
+  new Rune('g', 'ᚵ', 'KeyG'),
+  new Rune('h', 'ᚼ', 'KeyH'),
+  new Rune('ð', 'ᚧ', 'KeyJ'),
+  new Rune('k', 'ᚴ', 'KeyK'),
+  new Rune('l', 'ᛚ', 'KeyL'),
+  new Rune('ä', 'ᛅ', 'Semicolon'),
+  new Rune('ö', 'ᚯ', "Quote"),
+  new Rune('z', 'ᛎ', 'KeyZ'),
+  new Rune('x', 'ᛪ', 'KeyX'),
+  new Rune('c', 'ᛍ', 'KeyC'),
+  new Rune('v', 'ᚡ', 'KeyV'),
+  new Rune('b', 'ᛒ', 'KeyB'),
+  new Rune('n', 'ᚿ', 'KeyN'),
+  new Rune('m', 'ᛘ', 'KeyM'),
 
-  new Rune('.', '᛭', '.', 'point'),
-  new Rune(' ', '᛫', ' ', 'space'),
-  new Rune(',', '᛬', ',', 'comma'),
+  new Rune('.', '᛭', 'Point', 'point'),
+  new Rune(' ', '᛫', 'Space', 'space'),
+  new Rune(',', '᛬', 'Comma', 'comma'),
 ];
 
 var runes = {'RUNIC LETTER AC A': 'ᚪ', 'RUNIC LETTER AESC': 'ᚫ', 'RUNIC LETTER ALGIZ EOLHX': 'ᛉ', 'RUNIC LETTER ANSUZ A': 'ᚨ', 'RUNIC LETTER BERKANAN BEORC BJARKAN B': 'ᛒ', 'RUNIC LETTER C': 'ᛍ', 'RUNIC LETTER CALC': 'ᛣ', 'RUNIC LETTER CEALC': 'ᛤ', 'RUNIC LETTER CEN': 'ᚳ', 'RUNIC LETTER CWEORTH': 'ᛢ', 'RUNIC LETTER D': 'ᛑ', 'RUNIC LETTER DAGAZ DAEG D': 'ᛞ', 'RUNIC LETTER DOTTED-L': 'ᛛ', 'RUNIC LETTER DOTTED-N': 'ᛀ', 'RUNIC LETTER DOTTED-P': 'ᛔ', 'RUNIC LETTER E': 'ᛂ', 'RUNIC LETTER EAR': 'ᛠ', 'RUNIC LETTER EHWAZ EH E': 'ᛖ', 'RUNIC LETTER ENG': 'ᚶ', 'RUNIC LETTER ETH': 'ᚧ', 'RUNIC LETTER FEHU FEOH FE F': 'ᚠ', 'RUNIC LETTER G': 'ᚵ', 'RUNIC LETTER GAR': 'ᚸ', 'RUNIC LETTER GEBO GYFU G': 'ᚷ', 'RUNIC LETTER GER': 'ᛄ', 'RUNIC LETTER HAEGL H': 'ᚻ', 'RUNIC LETTER HAGLAZ H': 'ᚺ', 'RUNIC LETTER ICELANDIC-YR': 'ᛨ', 'RUNIC LETTER ING': 'ᛝ', 'RUNIC LETTER INGWAZ': 'ᛜ', 'RUNIC LETTER IOR': 'ᛡ', 'RUNIC LETTER ISAZ IS ISS I': 'ᛁ', 'RUNIC LETTER IWAZ EOH': 'ᛇ', 'RUNIC LETTER JERAN J': 'ᛃ', 'RUNIC LETTER KAUN K': 'ᚴ', 'RUNIC LETTER KAUNA': 'ᚲ', 'RUNIC LETTER LAUKAZ LAGU LOGR L': 'ᛚ', 'RUNIC LETTER LONG-BRANCH-AR AE': 'ᛅ', 'RUNIC LETTER LONG-BRANCH-HAGALL H': 'ᚼ', 'RUNIC LETTER LONG-BRANCH-MADR M': 'ᛘ', 'RUNIC LETTER LONG-BRANCH-OSS O': 'ᚬ', 'RUNIC LETTER LONG-BRANCH-YR': 'ᛦ', 'RUNIC LETTER MANNAZ MAN M': 'ᛗ', 'RUNIC LETTER NAUDIZ NYD NAUD N': 'ᚾ', 'RUNIC LETTER O': 'ᚮ', 'RUNIC LETTER OE': 'ᚯ', 'RUNIC LETTER ON': 'ᚰ', 'RUNIC LETTER OPEN-P': 'ᛕ', 'RUNIC LETTER OS O': 'ᚩ', 'RUNIC LETTER OTHALAN ETHEL O': 'ᛟ', 'RUNIC LETTER PERTHO PEORTH P': 'ᛈ', 'RUNIC LETTER Q': 'ᛩ', 'RUNIC LETTER RAIDO RAD REID R': 'ᚱ', 'RUNIC LETTER SHORT-TWIG-AR A': 'ᛆ', 'RUNIC LETTER SHORT-TWIG-BJARKAN B': 'ᛓ', 'RUNIC LETTER SHORT-TWIG-HAGALL H': 'ᚽ', 'RUNIC LETTER SHORT-TWIG-MADR M': 'ᛙ', 'RUNIC LETTER SHORT-TWIG-NAUD N': 'ᚿ', 'RUNIC LETTER SHORT-TWIG-OSS O': 'ᚭ', 'RUNIC LETTER SHORT-TWIG-SOL S': 'ᛌ', 'RUNIC LETTER SHORT-TWIG-TYR T': 'ᛐ', 'RUNIC LETTER SHORT-TWIG-YR': 'ᛧ', 'RUNIC LETTER SIGEL LONG-BRANCH-SOL S': 'ᛋ', 'RUNIC LETTER SOWILO S': 'ᛊ', 'RUNIC LETTER STAN': 'ᛥ', 'RUNIC LETTER THURISAZ THURS THORN': 'ᚦ', 'RUNIC LETTER TIWAZ TIR TYR T': 'ᛏ', 'RUNIC LETTER URUZ UR U': 'ᚢ', 'RUNIC LETTER V': 'ᚡ', 'RUNIC LETTER W': 'ᚥ', 'RUNIC LETTER WUNJO WYNN W': 'ᚹ', 'RUNIC LETTER X': 'ᛪ', 'RUNIC LETTER Y': 'ᚤ', 'RUNIC LETTER YR': 'ᚣ', 'RUNIC LETTER Z': 'ᛎ', 'RUNIC MULTIPLE PUNCTUATION': '᛬', 'RUNIC SINGLE PUNCTUATION': '᛫', 'RUNIC ARLAUG SYMBOL (golden number 17)': 'ᛮ', 'RUNIC TVIMADUR SYMBOL (golden number 18)': 'ᛯ', 'RUNIC BELGTHOR SYMBOL (golden number 19)': 'ᛰ', 'RUNIC CROSS PUNCTUATION': '᛭'};

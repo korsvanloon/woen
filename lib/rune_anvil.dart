@@ -2,7 +2,10 @@ import 'package:polymer/polymer.dart';
 import 'package:woen/keychar.dart';
 import 'package:stream_ext/stream_ext.dart';
 import 'package:browser_detect/browser_detect.dart';
+import 'package:paper_elements/paper_button.dart';
+import 'package:paper_elements/paper_dialog.dart';
 import 'dart:html';
+import 'dart:async';
 
 @CustomTag('rune-anvil')
 class RuneAnvil extends PolymerElement {
@@ -16,7 +19,8 @@ class RuneAnvil extends PolymerElement {
 
   attached() {
     super.attached();
-    keyboard = toObservable(keyboardCharacters.map((e) => e.split('')));
+//    keyboard = toObservable(keyboardCharacters.map((e) => e.split('')));
+    keyboard = toObservable(keyboardCodes);
     languages = [
       new Language('Elder Futhark', elderFuthark),
       new Language('Anglo Futhorc', angloFuthorc),
@@ -24,56 +28,72 @@ class RuneAnvil extends PolymerElement {
       new Language('Medieval Runes', medievalRunes),
     ];
     language = languages.first;
+
   }
 
+//  blaat() {
+//    var woen = new God('woen');
+//    var frija = new God('frija');
+//    var god = God.merge([woen, frija]);
+//  }
 
+  useCustomCaret(TextAreaElement inputElement) {
+    var caret = inputElement.parent.querySelector('.caret') as SpanElement;
 
-  ready() {
-    super.ready();
+    inputElement.onFocus.listen((_) => caret.style.display = 'inline');
+    inputElement.onBlur.listen((_) => caret.style.display = 'none');
 
-    var input = shadowRoot.querySelector('#rune-input') as TextAreaElement;
-    input.onKeyPress.where((e) => e.charCode == KeyCode.ENTER
-      || (KeyCode.isCharacterKey(e.charCode) && !_isValid(e))).listen((e) {
-      e.preventDefault();
+    var direction$ = inputElement.onKeyDown
+    .where((e) => [KeyCode.LEFT, KeyCode.RIGHT, KeyCode.UP, KeyCode.DOWN].contains(e.keyCode));
+
+    [inputElement.onInput, direction$, inputElement.onClick, inputElement.onSelectStart]
+    .reduce(StreamExt.merge)
+    .listen((e) {
+      var adjustX = -1;
+      if (e.type == 'keydown' && e.keyCode == KeyCode.LEFT && inputElement.selectionStart != 0) {
+        adjustX = -2;
+      } else if (e.type == 'keydown' && e.keyCode == KeyCode.RIGHT && inputElement.selectionStart != inputElement.value.length) {
+        adjustX = 0;
+      }
+
+      var adjustY = 0;
+      var row = (inputElement.selectionStart / 24).floor();
+      if (e.type == 'keydown' && e.keyCode == KeyCode.UP && row != 0) {
+        adjustY = -1;
+      } else if (e.type == 'keydown' && e.keyCode == KeyCode.DOWN && row != (inputElement.value.length / 24).floor()) {
+        adjustY = 1;
+      }
+      caret.style.left = '${((inputElement.selectionStart % 23) + adjustX) * 14.4 + 34}px';
+      caret.style.top = '${(row + adjustY) * 25 + 16 - inputElement.scrollTop}px';
+    });
+  }
+
+  subscribeToKeyboard(DivElement keyboardDiv) {
+    return keyboardDiv.querySelectorAll("paper-button")
+    .map((k) => k.onClick.map((e) => k.id))
+    .reduce(StreamExt.merge)
+    .listen((code) {
+      if (code == 'Backspace') {
+        if (input.isNotEmpty)
+          input = input.substring(0, input.length - 1);
+      } else {
+        var char = codeToChar(code);
+        if (findRune(code) != null)
+          input += char;
+      }
+    });
+  }
+
+  StreamSubscription keyCodeSubscription;
+
+  prepareKeyboard(DivElement keyboardDiv) {
+
+    new Timer(new Duration(milliseconds:100), () {
+      keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
     });
 
-    input.onKeyPress.where((e) => _isValid(e)).listen((e) {
-      if(shadowRoot.querySelector('.highlight') != null)
-        shadowRoot.querySelector('.highlight').classes.remove('highlight');
-      var key = safe(new String.fromCharCode(e.keyCode));
-      shadowRoot.querySelector('#key$key').classes.add('highlight');
-    });
-    if(browser.isFirefox) {
-      var caret = shadowRoot.querySelector('#caret') as SpanElement;
-      input.onFocus.listen((_) => caret.style.display = 'inline');
-      input.onBlur.listen((_) => caret.style.display = 'none');
-      var direction$ = input.onKeyDown.where((e) => [KeyCode.LEFT, KeyCode.RIGHT, KeyCode.UP, KeyCode.DOWN].contains(e.keyCode));
-      StreamExt.merge(input.onInput, StreamExt.merge(direction$, StreamExt.merge(input.onClick, input.onSelectStart)))
-      .listen((e) {
-        print(e.type);
-        var adjustX = -1;
-        if(e.type == 'keydown' && e.keyCode == KeyCode.LEFT && input.selectionStart != 0) {
-          adjustX = -2;
-        } else if(e.type == 'keydown' && e.keyCode == KeyCode.RIGHT && input.selectionStart != input.value.length) {
-          adjustX = 0;
-        }
+    var buttons = keyboardDiv.querySelectorAll('#stave,#sound');
 
-        var adjustY = 0;
-        var row = (input.selectionStart / 24).floor();
-        if(e.type == 'keydown' && e.keyCode == KeyCode.UP && row != 0) {
-          adjustY = -1;
-        } else if(e.type == 'keydown' && e.keyCode == KeyCode.DOWN && row != (input.value.length / 24).floor()) {
-          adjustY = 1;
-        }
-        caret.style.left = '${((input.selectionStart % 24)+adjustX) * 14.4 + 34}px';
-        caret.style.top = '${(row+adjustY)*32 + 20 - input.scrollTop}px';
-      });
-    }
-    input.onScroll.listen((e) {
-      shadowRoot.querySelector('#rune-hint').scrollTop = input.scrollTop;
-    });
-
-    var buttons = shadowRoot.querySelectorAll('#stave,#sound');
     buttons.forEach((b) {
       b.onClick.listen((e) {
         var disabled = b.disabled;
@@ -85,53 +105,129 @@ class RuneAnvil extends PolymerElement {
     });
     buttons.first.disabled = true;
 
-    var languageChoser = shadowRoot.querySelector('select') as SelectElement;
+    var languageChoser = keyboardDiv.querySelector('select') as SelectElement;
+
     languageChoser.onChange.listen((e) {
       var languageName = languageChoser.selectedOptions.first.value;
       language = languages.firstWhere((l) => l.name == languageName);
-      keyboard = new ObservableList.from(keyboardCharacters.map((c)=>c.split('')));
+      keyboard = toObservable(keyboardCodes);
+      input = '';
+      new Timer(new Duration(milliseconds:100), () {
+        keyCodeSubscription.cancel();
+        keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
+      });
     });
+  }
+
+  prepareInput(TextAreaElement inputElement) {
+    var translationElement = inputElement.parent.querySelector('.translation') as TextAreaElement;
+    inputElement.spellcheck = false;
+    translationElement.spellcheck = false;
+
+
+    inputElement.onKeyPress // filter
+    .where((e) => e.which == KeyCode.ENTER
+    || (!_isValid(e) && ![KeyCode.BACKSPACE, KeyCode.LEFT, KeyCode.UP, KeyCode.DOWN, KeyCode.RIGHT].contains(e.keyCode)))
+    .listen((e) => e.preventDefault());
+
+    inputElement.onKeyPress // highlight
+    .where(_isValid)
+    .listen((e) {
+      var code = charToCode(new String.fromCharCode(e.which));
+      var button = shadowRoot.querySelector('#$code') as PaperButton;
+      button.className = 'highlight';
+    });
+
+    inputElement.onKeyUp // remove highlight
+    .listen((e) {
+      if (shadowRoot.querySelector('.highlight') != null)
+        shadowRoot.querySelector('.highlight').classes.remove('highlight');
+    });
+
+    inputElement.onScroll // sync scrolling
+    .listen((e) {
+      translationElement.scrollTop = inputElement.scrollTop;
+    });
+
+    var buttons = inputElement.parent.querySelectorAll('core-icon-button');
+//    if(browser.isFirefox) buttons.forEach((b) => b.hidden = true);
+
+    StreamExt.merge(
+        inputElement.onKeyPress.where((e) => e.which == KeyCode.C && (e.ctrlKey || e.metaKey)),
+        buttons.first.onClick
+    ).listen((UIEvent e) {
+      e.preventDefault();
+
+      if(!browser.isChrome) {
+        var dialog = shadowRoot.querySelector('paper-dialog') as PaperDialog;
+        dialog.open();
+        var dialogInput = dialog.querySelector('input') as InputElement;
+        new Timer(new Duration(milliseconds:100), () {
+          dialogInput.value = translationElement.value;
+          dialogInput.select();
+        });
+      }
+      else {
+        translationElement.select();
+        document.execCommand('copy', null, null);
+        inputElement.focus();
+      }
+    });
+  }
+
+  ready() {
+    super.ready();
+
+    var phoneticInput = shadowRoot.querySelector('#phonetics .input') as TextAreaElement;
+    var runesInput = shadowRoot.querySelector('#runes .input') as TextAreaElement;
+
+    prepareInput(phoneticInput);
+    prepareInput(runesInput);
+
+    prepareKeyboard(shadowRoot.querySelector('#keyboard') as DivElement);
+
+    if (browser.isFirefox) {
+      useCustomCaret(phoneticInput);
+      useCustomCaret(runesInput);
+    }
+
+    if(TouchEvent.supported) {
+      phoneticInput.disabled = true;
+      runesInput.disabled = true;
+    }
 
   }
 
   Rune findRune(String key) {
-    return language.characters.firstWhere((c) => c.keyChar == key, orElse:()=>null);
+    return language.characters.firstWhere((c) => c.keyChar == key, orElse:() => null);
   }
 
   String translateText(String text, [hint=false]) {
-    if(language == null) return '';
+    if (language == null) return '';
     return text.split('').map((char) {
-      var rune = language.characters.firstWhere((r) => r.keyChar == char, orElse:() => null);
+      var rune = findRune(charToCode(char));
       return hint ? rune.sound : rune.stave;
     }).join();
   }
 
-  bool _isValid(KeyboardEvent e) {
-    var ke = new KeyEvent.wrap(e);
-    var charCode = ke.charCode;
-//    var char = new String.fromCharCode(charCode).toLowerCase();
-    var char = new String.fromCharCode(charCode);
-    var inKeyboard = language.characters.map((r) => r.keyChar).contains(char);
+  bool _isValid(e) {
+    var char = new String.fromCharCode(e.which);
+    var inKeyboard = findRune(charToCode(char)) != null;
     return inKeyboard;
   }
-
-  safe(key) => key == ',' ? 'comma'
-  : key == '.' ? 'point'
-  : key == ' ' ? 'space'
-  : key == ';' ? 'semicolon'
-  : key == '[' ? 'bracket'
-  : key == '`' ? 'backquote'
-  : key;
 }
 
 class Language {
   Language(this.name, this.characters);
+
   final String name;
   List<KeyBoardChar> characters;
   List<List<KeyBoardChar>> keyboard;
 }
+
 class Translation {
   Translation(this.language, this.original, this.text);
+
   final Language language;
   String text;
   String original;
