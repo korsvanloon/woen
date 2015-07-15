@@ -8,17 +8,20 @@ abstract class KeyBoardChar {
 
 class LatinChar implements KeyBoardChar {
   LatinChar(char) : this.keyChar = char, this.stave = char, this.sound = char;
+
   String stave, keyChar, sound;
 }
 
-class Rune implements KeyBoardChar{
+class Rune implements KeyBoardChar {
   Rune(this.sound, this.stave, this.keyChar, [this.name, this.nameTranslation, this.meaning]);
+
   String sound;
   String stave;
   String keyChar;
   String name;
   String nameTranslation;
   String meaning;
+
   toString() => stave;
 }
 
@@ -29,7 +32,7 @@ const keyboardDe = const[r"qwertzuiopü", r"asdfghjklöä", r"yxcvbnm,.", r" "];
 const keyboardFr = const[r"azertyuiop^", r"qsdfghjklm'", r"wxcvbn,;:", r" "];
 
 charToCode(char, [keyboard=keyboardEn]) {
-  for(int i = 0; i < keyboard.length; i++) {
+  for (int i = 0; i < keyboard.length; i++) {
     for (int j = 0; j < keyboard[i].length; j++) {
       if (keyboard[i][j] == char) {
         return keyboardCodes[i][j];
@@ -40,7 +43,7 @@ charToCode(char, [keyboard=keyboardEn]) {
 }
 
 codeToChar(code, [keyboard=keyboardEn]) {
-  for(int i = 0; i < keyboard.length; i++) {
+  for (int i = 0; i < keyboard.length; i++) {
     for (int j = 0; j < keyboard[i].length; j++) {
       if (keyboardCodes[i][j] == code) {
         return keyboard[i][j];
@@ -51,9 +54,9 @@ codeToChar(code, [keyboard=keyboardEn]) {
 }
 
 var keyboardCodes = [
-  ['KeyQ','KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft'],
-  ['KeyA','KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote'],
-  ['KeyZ','KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Point'],
+  ['KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft'],
+  ['KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote'],
+  ['KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Point'],
   ['Space']];
 
 var latin = <LatinChar>[
@@ -154,7 +157,7 @@ var angloFuthorc = <Rune>[
   new Rune('f', 'ᚠ', 'KeyF', 'feoh'),
   new Rune('u', 'ᚢ', 'KeyU', 'ur'),
   new Rune('þ', 'ᚦ', 'KeyV', 'thorn'),
-  new Rune('a', 'ᚪ', 'KeyA', 'ac'),  //
+  new Rune('a', 'ᚪ', 'KeyA', 'ac'), //
   new Rune('r', 'ᚱ', 'KeyR', 'rad'),
   new Rune('k', 'ᚳ', 'KeyK', 'cen'),
   new Rune('g', 'ᚷ', 'KeyG', 'gyfu'),
@@ -178,7 +181,7 @@ var angloFuthorc = <Rune>[
   new Rune('d', 'ᛞ', 'KeyD', 'daeg'),
   new Rune('o', 'ᚩ', 'KeyO', 'os'),
 
-  new Rune('ø', 'ᛇ','KeyZ', 'eoh'),
+  new Rune('ø', 'ᛇ', 'KeyZ', 'eoh'),
   new Rune('œ', 'ᛟ', 'KeyQ', 'ethel'),
   new Rune('æ', 'ᚫ', 'BracketLeft', 'aesc'), //
   new Rune('ô', 'ᛡ', 'Semicolon', 'ior'), //

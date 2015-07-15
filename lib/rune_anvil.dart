@@ -63,7 +63,7 @@ class RuneAnvil extends PolymerElement {
     });
   }
 
-  subscribeToKeyboard(DivElement keyboardDiv) {
+  StreamSubscription subscribeToKeyboard(DivElement keyboardDiv) {
     return keyboardDiv.querySelectorAll("paper-button")
     .map((k) => k.onClick.map((e) => k.id))
     .reduce(StreamExt.merge)
