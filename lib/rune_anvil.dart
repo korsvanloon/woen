@@ -244,7 +244,7 @@ class RuneAnvil extends PolymerElement {
         shadowRoot.querySelector('.highlight').classes.remove('highlight');
     });
 
-    var copyInput = shadowRoot.querySelector('input');
+    var copyInput = shadowRoot.querySelector('input') as InputElement;
     var alert = shadowRoot.querySelector('.alert');
     var doneButton = shadowRoot.querySelector('.done');
 
@@ -261,11 +261,11 @@ class RuneAnvil extends PolymerElement {
       }
     });
 
-    [copyInput.onKeyUp.where((e) => e.which == KeyCode.ENTER), doneButton.onClick]
+    [copyInput.onKeyUp.where((e) => e.which == KeyCode.ENTER), doneButton.onClick, copyInput.onSubmit]
     .reduce(StreamExt.merge)
     .listen((e) {
       var text = removeUnsupportedCharacters(replaceNumerals(replaceInterpunction(replaceDiacritics(copyInput.value.toLowerCase()))));
-
+      print(text);
       // apply rules
       var result = rules.fold(text, (String p, c) {
         return p.replaceAllMapped(c.regExp, (Match m) => m.group(0).replaceFirst(m.group(1), c.sound));
@@ -277,6 +277,7 @@ class RuneAnvil extends PolymerElement {
         input = translatePhoneticToInput(result);
       } catch(e) {
         alert.text = 'Ik kan deze tekst niet converteren. Probeer eerst speciale karakters en leestekens te verwijderen.';
+        alert.style.display = 'block';
       }
       copyInput.value = '';
     });
