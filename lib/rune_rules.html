@@ -1,21 +1,28 @@
 <polymer-element name="rune-rules">
     <template>
         <style>
+            :host {
+                font-family: runes, monospace;
+            }
             td {
                 padding: 0 10px;
             }
             core-dropdown {
                 position: absolute;
-                top: -222px;
+                top: -210px;
                 left: -46px;
             }
-            core-icon-button {
+            paper-icon-button {
                 font-size: 11px;
+            }
+            paper-icon-button:active, paper-icon-button.highlight {
+                color: orangered !important;
+                -webkit-tap-highlight-color: transparent;
             }
         </style>
 
         <span relative>
-            <core-icon-button icon="info"></core-icon-button>
+            <paper-icon-button icon="info"></paper-icon-button>
             <core-dropdown horizontal layout>
                 <template repeat="{{ rules in ruleList | chop }}">
                     <table>

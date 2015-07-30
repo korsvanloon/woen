@@ -17,7 +17,7 @@ class RuneRules extends PolymerElement {
       'sound': numeralMap[k],
       'stave': '-'
     }).toList());
-    var button = shadowRoot.querySelector('core-icon-button');
+    var button = shadowRoot.querySelector('paper-icon-button');
     var dropdown = shadowRoot.querySelector('core-dropdown') as CoreDropdown;
 
     button.onClick

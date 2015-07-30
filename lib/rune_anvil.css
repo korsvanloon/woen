@@ -42,7 +42,7 @@
     height: 30px;
     display: none;
 }
-:focus {
+#rune-translator:focus, input:focus {
     z-index: 5;
     outline: 4px solid rgba(255, 69, 0, 0.5);
 }
@@ -121,8 +121,12 @@
     font-family: runes, monospace;
 }
 
-* /deep/ #ripple, #keyboard paper-button:active, #keyboard paper-button.highlight {
-    color: orangered;
+* /deep/ #ripple,
+paper-fab:active, paper-fab.highlight,
+paper-button:active, paper-button.highlight,
+paper-icon-button:active, paper-icon-button.highlight {
+    color: orangered !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #keyboard paper-button {
@@ -256,14 +260,14 @@
     #tip {
         display: none;
     }
-    #normalInput .actions .done {
+    #normalInput .actions select {
         display: none;
     }
     #normalInput input {
         width: 208px;
     }
     rune-rules /deep/ core-dropdown {
-        left: -228px;
+        left: -272px;
     }
 }
 @-moz-document url-prefix() {
@@ -297,11 +301,12 @@ paper-fab {
 paper-fab::shadow #ripple {
     color: orangered;
 }
-paper-icon-button {
+#messages paper-icon-button {
     padding: 0;
     margin: auto 5px;
     background-color: lightgray;
     border-radius: 20px;
+    min-width: 24px;
 }
 .message p {
     margin: 2px 10px;
