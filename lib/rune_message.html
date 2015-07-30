@@ -1,0 +1,32 @@
+<polymer-element name="rune-message" extends="li" attributes="message">
+    <template>
+        <style>
+            paper-icon-button {
+                padding: 0;
+                margin: auto 5px;
+                background-color: lightgray;
+                border-radius: 20px;
+                height: 18px;
+                width: 18px;
+            }
+            .message p {
+                margin: 2px 10px;
+                padding: 2px 10px;
+                border-radius: 3px;
+                background-color: lightgrey;
+                max-width: 666px;
+                font-family: runes, monospace;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+        </style>
+        <div class="message" horizontal layout>
+            <paper-icon-button icon="cancel" on-tap="{{destroyAction}}"></paper-icon-button>
+            <flip-card>
+                <content></content>
+            </flip-card>
+        </div>
+    </template>
+    <script type="application/dart" src="rune_message.dart"></script>
+</polymer-element>
+

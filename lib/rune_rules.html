@@ -1,0 +1,41 @@
+<polymer-element name="rune-rules">
+    <template>
+        <style>
+            td {
+                padding: 0 10px;
+            }
+            core-dropdown {
+                position: absolute;
+                top: -222px;
+                left: -46px;
+            }
+            core-icon-button {
+                font-size: 11px;
+            }
+        </style>
+
+        <span relative>
+            <core-icon-button icon="info"></core-icon-button>
+            <core-dropdown horizontal layout>
+                <template repeat="{{ rules in ruleList | chop }}">
+                    <table>
+                        <tr template repeat="{{ rule in rules }}">
+                            <td>{{ emphasized(rule)[0] }}<strong>{{ rule.letter }}</strong>{{ emphasized(rule)[1] }}</td>
+                            <td>{{ rule.sound }}</td>
+                            <td>{{ rule.stave }}</td>
+                        </tr>
+                    </table>
+                </template>
+                <table>
+                    <tr template repeat="{{ numeral in numerals }}">
+                        <td>{{ numeral['numeral'] }}</td>
+                        <td>{{ numeral['sound'] }}</td>
+                        <td>{{ numeral['stave'] }}</td>
+                    </tr>
+                </table>
+            </core-dropdown>
+        </span>
+
+    </template>
+    <script type="application/dart" src="rune_rules.dart"></script>
+</polymer-element>

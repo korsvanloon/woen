@@ -3,9 +3,11 @@ import 'package:woen/keychar.dart';
 import 'package:stream_ext/stream_ext.dart';
 import 'package:browser_detect/browser_detect.dart';
 import 'package:paper_elements/paper_button.dart';
-import 'package:paper_elements/paper_dialog.dart';
+import 'package:paper_elements/paper_fab.dart';
 import 'dart:html';
 import 'dart:async';
+import 'dart:math';
+import 'dart:convert';
 
 @CustomTag('rune-anvil')
 class RuneAnvil extends PolymerElement {
@@ -19,9 +21,13 @@ class RuneAnvil extends PolymerElement {
   @observable int keyboardChoice = 0;
   List keyboards = [keyboardEn, keyboardDe, keyboardFr];
   StreamSubscription keyCodeSubscription;
+  @observable int width = window.innerWidth;
+  Storage storage;
 
-  attached() {
-    super.attached();
+  @observable get showPhonetics => showHint;
+
+  ready() {
+    super.ready();
     keyboard = toObservable(keyboardCodes);
     languages = [
       new Language('Elder Futhark', elderFuthark),
@@ -32,41 +38,67 @@ class RuneAnvil extends PolymerElement {
     language = languages.first;
   }
 
-  useCustomCaret(TextAreaElement inputElement) {
-    var caret = inputElement.parent.querySelector('.caret') as SpanElement;
+  domReady() {
+    super.domReady();
 
-    inputElement.onFocus.listen((_) => caret.style.display = 'inline');
-    inputElement.onBlur.listen((_) => caret.style.display = 'none');
+    storage = window.localStorage;
 
-    var direction$ = inputElement.onKeyDown
-    .where((e) => [KeyCode.LEFT, KeyCode.RIGHT, KeyCode.UP, KeyCode.DOWN].contains(e.keyCode));
+    prepareInput(shadowRoot.querySelector('#rune-translator') as DivElement);
 
-    [inputElement.onInput, direction$, inputElement.onClick, inputElement.onSelectStart]
-    .reduce(StreamExt.merge)
+    prepareKeyboard(shadowRoot.querySelector('#keyboard') as DivElement);
+
+    prepareMessages();
+
+    if(TouchEvent.supported) {
+      shadowRoot.querySelector('#keyboard-choice').hidden = true;
+      shadowRoot.querySelector('#rune-translator').attributes.remove('horizontal');
+    }
+  }
+
+  destroyAction(Event e, var detail, Element target) {
+    messages.remove(target.attributes['detail']);
+  }
+
+  void itemsChanged() {
+    if (storage != null) {
+      storage['messages'] = JSON.encode(messages);
+    }
+  }
+
+  toggle(Event event, var detail, var target) {
+    target.toggle();
+  }
+
+  take(int n) => (List l) => l.skip(max(0, l.length - n));
+
+  @observable List<String> messages;
+  void prepareMessages() {
+
+    messages = toObservable(storage['messages'] == null ? [] : JSON.decode(storage['messages']));
+    var sendButton = shadowRoot.querySelector('paper-fab') as PaperFab;
+    sendButton.onClick
+    .where((_) => input != '')
     .listen((e) {
-      var adjustX = -1;
-      if (e.type == 'keydown' && e.keyCode == KeyCode.LEFT && inputElement.selectionStart != 0) {
-        adjustX = -2;
-      } else if (e.type == 'keydown' && e.keyCode == KeyCode.RIGHT && inputElement.selectionStart != inputElement.value.length) {
-        adjustX = 0;
-      }
-
-      var adjustY = 0;
-      var row = (inputElement.selectionStart / 24).floor();
-      if (e.type == 'keydown' && e.keyCode == KeyCode.UP && row != 0) {
-        adjustY = -1;
-      } else if (e.type == 'keydown' && e.keyCode == KeyCode.DOWN && row != (inputElement.value.length / 24).floor()) {
-        adjustY = 1;
-      }
-      caret.style.left = '${((inputElement.selectionStart % 23) + adjustX) * 14.4 + 34}px';
-      caret.style.top = '${(row + adjustY) * 25 + 16 - inputElement.scrollTop}px';
+      var text = input;
+      messages.add(text);
+      itemsChanged();
+      input = '';
+      new Timer(new Duration(milliseconds:10), () { // keyboard needs to be re-rendered first
+        window.scrollTo(0, document.body.scrollHeight);
+      });
     });
   }
 
   StreamSubscription subscribeToKeyboard(DivElement keyboardDiv) {
-    return keyboardDiv.querySelectorAll("paper-button")
-    .map((k) => k.onClick.map((e) => k.id))
-    .reduce(StreamExt.merge)
+    return
+    StreamExt.merge(
+      keyboardDiv.querySelectorAll("paper-button")
+      .map((k) => k.onClick.map((e) => k.id))
+      .reduce(StreamExt.merge),
+      keyboardDiv.onKeyPress
+      .map((e) => charToCode(e.which))
+      .where((c) => c != null)
+    )
     .listen((code) {
       if (code == 'Backspace') {
         if (input.isNotEmpty)
@@ -96,115 +128,248 @@ class RuneAnvil extends PolymerElement {
     });
     buttons.first.disabled = true;
 
-    var languageChoser = keyboardDiv.querySelector('select') as SelectElement;
+    var languageChooser = keyboardDiv.querySelector('select') as SelectElement;
 
-    languageChoser.onChange.listen((e) {
-      var languageName = languageChoser.selectedOptions.first.value;
+    languageChooser.onChange
+    .listen((e) {
+      var languageName = languageChooser.selectedOptions.first.value;
       language = languages.firstWhere((l) => l.name == languageName);
       keyCodeSubscription.cancel();
-      keyboard = toObservable(keyboardCodes);
+      keyboard = toObservable(keyboardCodes); // redraw keyboard
       input = '';
-      new Timer(new Duration(milliseconds:100), () {
+
+      new Timer(new Duration(milliseconds:100), () { // keyboard needs to be re-rendered first
         keyCodeSubscription = subscribeToKeyboard(keyboardDiv);
       });
     });
   }
 
-  prepareInput(TextAreaElement inputElement) {
-    var translationElement = inputElement.parent.querySelector('.translation') as TextAreaElement;
-    inputElement.spellcheck = false;
-    translationElement.spellcheck = false;
+  prepareInput(DivElement inputElement) {
+
+    var spanCarets = shadowRoot.querySelectorAll('.caret');
+    DoubleCaret caret = new DoubleCaret(spanCarets.first, spanCarets.last);
+
+    inputElement.onClick
+    .map((e) {
+      var adjustedX = (e.page.x - inputElement.offsetLeft - 20) % (inputElement.clientWidth / 2);
+      var exactX = (adjustedX / DoubleCaret.width).round();
+
+      var adjustedY = e.page.y - inputElement.offsetTop-20;
+      var exactY = (adjustedY / DoubleCaret.height).round();
+
+      var x = exactX;
+      var y = exactY;
 
 
-    inputElement.onKeyPress // filter
-    .where((e) => e.which == KeyCode.ENTER
-    || (!_isValid(e) && ![KeyCode.BACKSPACE, KeyCode.LEFT, KeyCode.UP, KeyCode.DOWN, KeyCode.RIGHT].contains(e.keyCode)))
-    .listen((e) => e.preventDefault());
-
-    inputElement.onKeyPress // highlight
-    .where(_isValid)
-    .listen((e) {
-      var code = charToCode(new String.fromCharCode(e.which), keyboards[keyboardChoice]);
-      var button = shadowRoot.querySelector('#$code') as PaperButton;
-      button.className = 'highlight';
+      if(x < 0) x = 0;
+      if(x > caret.columns) x = caret.columns;
+      if(y < 0) y = 0;
+      if(y > caret.rowHeight(input)) y = caret.rowHeight(input);
+      if(y == caret.rowHeight(input) && x > input.length % caret.columns) {
+        x = input.length % caret.columns;
+      }
+      return new Point(x, y);
+    })
+    .listen((p) {
+      caret.position = p;
     });
 
-    inputElement.onKeyUp // remove highlight
+    inputElement.onKeyDown
+    .where((e) => [KeyCode.LEFT, KeyCode.UP, KeyCode.DOWN, KeyCode.RIGHT].contains(e.which))
+    .listen((e) {
+      e.preventDefault();
+      switch(e.which) {
+        case KeyCode.LEFT:
+          if(caret.length == 0) break;
+          caret.moveLeft();
+          break;
+        case KeyCode.RIGHT:
+          if(caret.length == input.length) break;
+          caret.moveRight();
+          break;
+        case KeyCode.UP:
+          if(caret.position.y == 0) break;
+          caret.moveUp();
+          break;
+        case KeyCode.DOWN:
+          if(caret.position.y == (input.length / caret.columns).floor()) break;
+          caret.moveDown();
+          if(caret.position.x > input.length % caret.columns)
+            caret.position = new Point(input.length % caret.columns, caret.position.y);
+          break;
+      }
+    });
+
+    inputElement.onKeyDown
+    .where((e) => e.keyCode == KeyCode.BACKSPACE && input.isNotEmpty)
+    .listen((e) {
+      e.preventDefault();
+
+      var selectionStart = 0, selectionEnd = 0;
+
+      if(browser.isChrome) {
+        selectionStart = shadowRoot.getSelection().anchorOffset;
+        selectionEnd = shadowRoot.getSelection().focusOffset;
+      }
+
+      if(selectionStart != selectionEnd) {
+        if(selectionStart < selectionEnd)
+          input = input.replaceRange(selectionStart, selectionEnd, '');
+        else
+          input = input.replaceRange(selectionEnd, selectionStart, '');
+
+        caret.position = new Point(selectionStart % caret.columns, (selectionStart / caret.columns).floor());
+      }
+      else {
+        input = input.replaceFirst(new RegExp('.'), '', caret.length-1);
+        caret.moveLeft();
+      }
+    });
+
+    inputElement.onKeyPress // highlight & input
+    .map((e) => e..preventDefault())
+    .map((e) => new String.fromCharCode(e.which))
+    .where(_isValid)
+    .listen((char) {
+      var code = charToCode(char, keyboards[keyboardChoice]);
+      var button = shadowRoot.querySelector('#$code') as PaperButton;
+      button.className = 'highlight';
+      input = input.replaceFirst('', char, caret.length);
+      caret.moveRight();
+    });
+
+    inputElement.onKeyUp // remove highlight & input
     .listen((e) {
       if (shadowRoot.querySelector('.highlight') != null)
         shadowRoot.querySelector('.highlight').classes.remove('highlight');
     });
 
-    inputElement.onScroll // sync scrolling
+    var copyInput = shadowRoot.querySelector('input');
+    var alert = shadowRoot.querySelector('.alert');
+    var doneButton = shadowRoot.querySelector('.done');
+
+    inputElement.onPaste
     .listen((e) {
-      translationElement.scrollTop = inputElement.scrollTop;
-    });
-
-    var buttons = inputElement.parent.querySelectorAll('core-icon-button');
-
-    StreamExt.merge(
-        inputElement.onKeyPress.where((e) => e.which == KeyCode.C && (e.ctrlKey || e.metaKey)),
-        buttons.first.onClick
-    ).listen((UIEvent e) {
-      e.preventDefault();
-
-      if(!browser.isChrome) {
-        var dialog = shadowRoot.querySelector('paper-dialog') as PaperDialog;
-        dialog.open();
-        var dialogInput = dialog.querySelector('input') as InputElement;
-        new Timer(new Duration(milliseconds:100), () {
-          dialogInput.value = translationElement.value;
-          dialogInput.select();
-        });
-      }
-      else {
-        translationElement.select();
-        document.execCommand('copy', null, null);
-        translationElement.blur();
+      var text = e.clipboardData.getData('text');
+      if(_isStavic(text)) {
+        input = input.replaceFirst('', translateStaveToInput(text), caret.length);
+      } else if(_isPhonetic(text)) {
+        input = input.replaceFirst('', translatePhoneticToInput(text), caret.length);
+      } else {
+        alert.text = '<- Gebruik het input veld hier links om Nederlandse tekst te kopiëren.';
+        alert.style.display = 'block';
       }
     });
+
+    [copyInput.onKeyUp.where((e) => e.which == KeyCode.ENTER), doneButton.onClick]
+    .reduce(StreamExt.merge)
+    .listen((e) {
+      var text = removeUnsupportedCharacters(replaceNumerals(replaceInterpunction(replaceDiacritics(copyInput.value.toLowerCase()))));
+
+      // apply rules
+      var result = rules.fold(text, (String p, c) {
+        return p.replaceAllMapped(c.regExp, (Match m) => m.group(0).replaceFirst(m.group(1), c.sound));
+      });
+      alert.text = '';
+      alert.style.display = 'none';
+
+      try {
+        input = translatePhoneticToInput(result);
+      } catch(e) {
+        alert.text = 'Ik kan deze tekst niet converteren. Probeer eerst speciale karakters en leestekens te verwijderen.';
+      }
+      copyInput.value = '';
+    });
+
   }
 
-  domReady() {
-    super.domReady();
+  void destroyItemAction(e, detail) {
+    messages.remove(detail);
+  }
 
-    var phoneticInput = shadowRoot.querySelector('#phonetics .input') as TextAreaElement;
-    var runesInput = shadowRoot.querySelector('#runes .input') as TextAreaElement;
+  bool _isStavic(String text) {
+    return text.split('').every((char) => language.characters.any((rune) => rune.stave == char));
+  }
 
-    prepareInput(phoneticInput);
-    prepareInput(runesInput);
-
-    prepareKeyboard(shadowRoot.querySelector('#keyboard') as DivElement);
-
-    if(browser.isFirefox) {
-      useCustomCaret(phoneticInput);
-      useCustomCaret(runesInput);
-    }
-
-    if(TouchEvent.supported) {
-      phoneticInput.disabled = true;
-      runesInput.disabled = true;
-      shadowRoot.querySelector('#keyboard-choice').hidden = true;
-    }
-
+  bool _isPhonetic(String text) {
+    return text.split('').every((char) => language.characters.any((rune) => rune.sound == char));
   }
 
   Rune findRune(String key) {
     return language.characters.firstWhere((c) => c.keyChar == key, orElse:() => null);
   }
 
-  String translateText(String text, [hint=false]) {
+  String translatePhoneticToInput(String text) {
+    return _translate(text, (rune) => rune.sound, (rune) => codeToChar(rune.keyChar, keyboards[keyboardChoice]));
+  }
+
+  String translateStaveToInput(String text) {
+    return _translate(text, (rune) => rune.stave, (rune) => codeToChar(rune.keyChar, keyboards[keyboardChoice]));
+  }
+
+  String translateTextToPhonetic(String text) {
+    return _translate(text, (rune) => codeToChar(rune.keyChar), (rune) => rune.sound);
+  }
+
+  String translateTextToStave(String text) {
+    return  _translate(text, (rune) => codeToChar(rune.keyChar), (rune) => rune.stave);
+  }
+
+  String _translate(String text, from, to) {
     if (language == null) return '';
     return text.split('').map((char) {
-      var rune = findRune(charToCode(char, keyboards[keyboardChoice]));
-      return hint ? rune.sound : rune.stave;
+      var rune = language.characters.firstWhere((rune) => from(rune) == char, orElse:() => null);
+      return to(rune);
     }).join();
   }
 
-  bool _isValid(e) {
-    var char = new String.fromCharCode(e.which);
-    var inKeyboard = findRune(charToCode(char, keyboards[keyboardChoice])) != null;
-    return inKeyboard;
+  bool _isValid(char) {
+    return findRune(charToCode(char, keyboards[keyboardChoice])) != null;
+  }
+}
+
+class DoubleCaret {
+  DoubleCaret(element1, this.element2) :
+    this.element1 = element1,
+    this.columns = ((element1.parent.clientWidth - 2*margin) / width).floor()
+  ;
+  SpanElement element1, element2;
+  Point _position = new Point(0,0);
+  static double width = 14.4;
+  static int height = 24;
+  final int columns;
+  static int margin = 20;
+
+  int get length => _position.x + _position.y*columns;
+
+  set position(Point p) {
+    element1.style.left = '${p.x * width + margin}px';
+    element1.style.top = '${p.y * height + margin}px';
+    element2.style.left = '${p.x * width + margin}px';
+    element2.style.top = '${p.y * height + margin}px';
+    _position =  p;
+  }
+  get position => _position;
+
+  int rowHeight(String text) => (text.length / columns).floor();
+
+  moveLeft() {
+    if(_position.y > 0 && _position.x == 0 )
+      position = new Point(columns, _position.y - 1);
+    else
+      position = new Point(_position.x-1, _position.y);
+  }
+  moveRight() {
+    if(_position.x == columns-1)
+      position = new Point(0, _position.y+1);
+    else
+      position = new Point(_position.x+1, _position.y);
+  }
+  moveUp() {
+    position = new Point(_position.x, _position.y-1);
+  }
+  moveDown() {
+    position = new Point(_position.x, _position.y+1);
   }
 }
 

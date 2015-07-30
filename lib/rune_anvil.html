@@ -1,279 +1,53 @@
 <polymer-element name="rune-anvil" attributes="input">
     <template>
-        <style>
-            :host {
-                position: relative;
-            }
-            .actions {
-                position: absolute;
-                bottom: 5px;
-            }
-            #runes, #phonetics {
-                position: relative;
-            }
-            #runes core-icon-button {
-                color: white;
-            }
+        <link rel="stylesheet" href="rune_anvil.css">
 
-            #runes .translation {
-                color: white;
-                background-color: #444;
-            }
-
-            #phonetics .translation {
-                color: black;
-                background-color: #eee;
-            }
-            .translation {
-                position: absolute;
-                z-index: -1;
-            }
-            textarea {
-                outline: none;
-                font-family: runes, monospace;
-                border: none;
-                font-size: 24px;
-                white-space: pre-wrap;
-                word-break: break-all;
-                margin: 0;
-                padding: 20px;
-                height: 250px;
-                width: 355px;
-                overflow-y: scroll;
-            }
-            .input {
-                background-color: transparent;
-                -webkit-text-fill-color: transparent;
-                color: orangered;
-            }
-            #phonetics {
-                font-family: Monaco, monospace;
-            }
-            .caret {
-                position: absolute;
-                font-size: 24px;
-                border-left: 1px solid orangered;
-                top: 20px;
-                left: 20px;
-                height: 30px;
-                display: none;
-            }
-            /*textarea:focus + .caret {*/
-                /*display: inline;*/
-            /*}*/
-
-            #tip {
-                background-color: #444;
-                position: absolute;
-                left: -200px;
-                height: 260px;
-                width: 300px;
-                transform: skew(20deg);
-                -o-transform: skew(20deg);
-                -moz-transform: skew(20deg);
-                -ms-transform: skew(20deg);
-                -webkit-transform: skew(20deg);
-                z-index: -2;
-                border-bottom-left-radius: 200px;
-                text-align: center;
-                font-size: 30px;
-                line-height: 60px;
-            }
-
-            #tip h1 {
-                margin-top: 80px;
-                color: #333;
-                font-size: 90px;
-                font-weight: bold;
-                transform: rotate(290deg) skew(20deg);
-                -o-transform: rotate(290deg) skew(20deg);
-                -moz-transform: rotate(290deg) skew(20deg);
-                -ms-transform: rotate(290deg) skew(20deg);
-                -webkit-transform: rotate(290deg) skew(20deg);
-            }
-
-            #keyboard {
-                width: 432px;
-                color: white;
-                font-weight: bold;
-                font-size: 20px;
-                position: relative;
-            }
-
-            #keyboard .line {
-                margin: 2px;
-            }
-
-            #keyboard .line:nth-child(3) {
-                margin-left: 10px;
-            }
-
-            #keyboard .line:nth-child(4) {
-                margin-left: 32px;
-            }
-
-            #keyboard paper-button::shadow .button-content {
-                padding: 0;
-                text-transform: none;
-            }
-            #keyboard paper-button {
-                color: white;
-                display: inline-block;
-                padding: 5px 9px;
-                margin: 2px;
-                border: 1px solid grey;
-                background-color: #333333;
-                border-radius: 5px;
-                min-width: 34px;
-                width: 34px;
-                line-height: 28px;
-                height: 40px;
-                vertical-align: bottom;
-                transition: color 200ms linear;
-                font-family: runes, monospace;
-            }
-
-            #keyboard paper-button::shadow #ripple, #keyboard paper-button:active, #keyboard paper-button.highlight {
-                color: orangered;
-            }
-
-            #keyboard .line:nth-child(5) paper-button {
-                min-width: 186px;
-                margin-left: 108px;
-            }
-
-            #keyboard #Backspace {
-                position: absolute;
-                font-size: 26px;
-                font-family: serif;
-                top: 0;
-                right: -40px;
-                min-width: 47px;
-                width: 47px;
-            }
-
-            #keyboard #sound {
-                left: 55px;
-            }
-
-            #keyboard button, #keyboard select {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                position: absolute;
-                bottom: 2px;
-                padding: 5px 10px;
-                width: 51px;
-                height: 40px;
-                border: 1px solid grey;
-                border-radius: 5px;
-                background-color: #333333;
-                color: white;
-                outline: none;
-                font-family: sans-serif;
-                font-size: 12px;
-                font-weight: normal;
-            }
-
-            #keyboard button:disabled {
-                border-color: orangered;
-                background-color: black;
-            }
-
-            #keyboard button:active {
-                background-color: black;
-            }
-
-            #keyboard #language {
-                left: 301px;
-                width: 124px;
-            }
-
-            #rune-translator {
-                position: relative;
-            }
-            #keyboard-choice {
-                position: absolute;
-                right: 0;
-                bottom: -20px;
-                color: grey;
-                font-size: 12px;
-            }
-            #keyboard-choice span {
-                margin: 0 5px;
-            }
-            #keyboard-choice span.core-selected {
-                border-bottom: 1px solid grey;
-            }
-            @media only screen and (max-device-width: 480px) {
-
-                #keyboard {
-                    width: 100%;
-                }
-                #keyboard paper-button {
-                    padding: 5px 0;
-                    min-width: 27px;
-                    width: 27px;
-                }
-                #keyboard #Backspace {
-                    top: 92px;
-                    right: 3px;
-                    min-width: 42px;
-                    width: 42px;
-                }
-                #keyboard .line:nth-child(5) paper-button {
-                    min-width: 120px;
-                    width: 120px;
-                }
-                #keyboard #language {
-                    left: 235px;
-                }
-                #rune-translator textarea {
-                    height: 100px;
-                    width: 320px;
-                }
-                #tip {
-                    display: none;
-                }
-                #phonetics textarea {
-                    margin-top: 140px;
-                }
-                #runes {
-                    top: 0;
-                    left: 0;
-                    position: absolute;
-                }
-            }
-            @-moz-document url-prefix() {
-                rune-anvil #keyboard paper-button {
-                    padding: 5px 8px;
-                }
-                rune-anvil #rune-translator .input {
-                    color: transparent;
-                }
-            }
-        </style>
-
-        <div horizontal layout id="rune-translator">
-            <div id="tip" class="rune-characters"><h1>ᛊᛏᛖᚦᛁ</h1></div>
-            <div id="phonetics">
-                <textarea class="translation">{{ translateText(input, true) }}</textarea>
-                <textarea class="input" value="{{ input }}"></textarea>
-                <span class="caret"></span>
-                <div class="actions">
-                    <core-icon-button icon="content-copy"></core-icon-button>
-                    <!--<core-icon-button icon="content-paste" disabled></core-icon-button>-->
+        <div id="messages">
+            <template repeat="{{message in messages | take(20)}}">
+                <div class="message" horizontal layout>
+                    <paper-icon-button icon="cancel" detail="{{message}}" on-tap="{{destroyAction}}"></paper-icon-button>
+                    <flip-card>
+                        <p front>{{message | translateTextToStave }}</p>
+                        <p back>{{message | translateTextToPhonetic }}</p>
+                    </flip-card>
                 </div>
-            </div>
-            <div id="runes">
-                <textarea class="translation">{{ translateText(input) }}</textarea>
-                <textarea class="input" value="{{ input }}"></textarea>
-                <span class="caret"></span>
-                <div class="actions">
-                    <core-icon-button icon="content-copy"></core-icon-button>
-                </div>
-            </div>
-
+            </template>
         </div>
+
+
+        <div horizontal layout relative>
+            <div id="tip" class="rune-characters"><h1>ᛊᛏᛖᚦᛁ</h1></div>
+            <div id="rune-translator" tabindex="0" horizontal layout>
+                <template if="{{ showHint || width >= 480 }}">
+                    <div id="phonetics">
+                        <div class="translation">{{ translateTextToPhonetic(input) }}<span class="caret"></span></div>
+                    </div>
+                </template>
+                <template if="{{ !showHint || width >= 480}}">
+                    <div id='runes'>
+                        <div class="translation">{{ translateTextToStave(input) }}<span class="caret"></span></div>
+                    </div>
+                </template>
+            </div>
+            <div class="actions" relative>
+                <paper-fab icon="send"></paper-fab>
+                <!--<core-icon-button id="copy" icon="content-copy"></core-icon-button>-->
+            </div>
+        </div>
+
+        <template if="{{language.name == 'Elder Futhark'}}">
+            <div id="normalInput" horizontal layout>
+                <input placeholder="Plak / schrijf Nederlands en druk op enter">
+                <div class="actions">
+                    <core-icon-button icon="done" class="done"></core-icon-button>
+                    <rune-rules></rune-rules>
+                    <select>
+                        <option value="dutch">Nederlands</option>
+                    </select>
+                    <div class="alert"></div>
+                </div>
+            </div>
+        </template>
 
         <div id="keyboard">
             <template repeat="{{ line in keyboard }}">
@@ -283,8 +57,8 @@
                 </div>
             </template>
             <paper-button id="Backspace">←</paper-button>
-            <button id="stave">stave</button>
-            <button id="sound">sound</button>
+            <button id="stave">Staaf</button>
+            <button id="sound">Klank</button>
             <select id="language">
                 <option template repeat="{{l in languages}}" value="{{l.name}}">{{l.name}}</option>
             </select>
@@ -294,10 +68,6 @@
                 <span>AZERTY</span>
             </core-selector>
         </div>
-        <paper-dialog>
-            Copy to clipboard: Ctrl+C / Cmd+C
-            <input tabindex="-1">
-        </paper-dialog>
 
     </template>
     <script type="application/dart" src="rune_anvil.dart"></script>
