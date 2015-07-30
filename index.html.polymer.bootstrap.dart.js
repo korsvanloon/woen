@@ -12795,7 +12795,7 @@ z=$.Lo()
 z=z.gvc(z).ez(0,new A.cs()).br(0)
 z=R.tB(z)
 a.RZ=this.ct(a,C.DT,a.RZ,z)
-y=(a.shadowRoot||a.webkitShadowRoot).querySelector("core-icon-button")
+y=(a.shadowRoot||a.webkitShadowRoot).querySelector("paper-icon-button")
 x=H.Go((a.shadowRoot||a.webkitShadowRoot).querySelector("core-dropdown"),"$isuG")
 z=J.Vg(y)
 H.J(new W.Ov(0,z.Q,z.a,W.wD(new A.NE(x)),z.b),[H.Kp(z,0)]).YI()},
